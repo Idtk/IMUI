@@ -1,7 +1,15 @@
 package com.gengqiquan.imui
 
+import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 
-interface IimView : iDecorator {
-    fun get(): View
+open class IimView(val context: Context, val parent: ViewGroup) : iDecorator {
+    override fun decorator(item: IimMsg) {
+
+    }
+
+    fun get() {
+
+    }
 }

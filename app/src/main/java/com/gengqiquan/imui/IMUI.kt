@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.textView
 
 class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private val uiAdapter by lazy {

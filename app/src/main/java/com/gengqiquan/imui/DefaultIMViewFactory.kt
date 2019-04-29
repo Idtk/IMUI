@@ -16,13 +16,13 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
     override fun create(parent: ViewGroup, viewType: Int): IimView? {
         return when (viewType) {
             TEXT -> {
-                ImText(context)
+                ImText(context,parent)
             }
             IMG -> {
-                ImImageView(context)
+                ImImageView(context,parent)
             }
             VIDEO -> {
-                IMVideoView(context)
+                IMVideoView(context,parent)
             }
             else -> null
         }

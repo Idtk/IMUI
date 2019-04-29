@@ -8,26 +8,32 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
-        val list = arrayListOf<TXMsg>()
-        list.add(TXMsg("你好", "", TXMsg.Type.TEXT))
-        list.add(TXMsg("你好", "", TXMsg.Type.TEXT))
+        val list = arrayListOf<RealMsg>()
+        list.add(RealMsg(TXMsg("你好", "", TXMsg.Type.TEXT), true))
+        list.add(RealMsg(TXMsg("你好防水防汗首付开上飞洒放松放松,你好防水防汗首付开上飞洒放松放松", "", TXMsg.Type.TEXT), false))
         list.add(
-            TXMsg(
-                "",
-                "#ff6600",
-                TXMsg.Type.IMG
+            RealMsg(
+                TXMsg(
+                    "",
+                    "#ff6600",
+                    TXMsg.Type.IMG
+                )
+                , true
             )
         )
         list.add(
-            TXMsg(
-                "",
-                "#2abcff",
-                TXMsg.Type.IMG
+            RealMsg(
+                TXMsg(
+                    "",
+                    "#2abcff",
+                    TXMsg.Type.IMG
+                ), false
             )
         )
-        list.add(TXMsg("", "", TXMsg.Type.VIDEO))
-        list.add(TXMsg("", "", TXMsg.Type.VIDEO))
-        im_ui.appendMsgs(list.map { RealMsg(it) }.toMutableList())
+        list.add(RealMsg(TXMsg("", "", TXMsg.Type.VIDEO), true))
+        list.add(RealMsg(TXMsg("", "", TXMsg.Type.VIDEO), false))
+        im_ui.appendMsgs(list.toMutableList())
     }
 }

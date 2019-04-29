@@ -3,10 +3,11 @@ package com.gengqiquan.imui
 import android.content.Context
 import android.graphics.Color
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 
-class IMVideoView(val context: Context) : IimView {
+class IMVideoView(val context: Context,parent: ViewGroup) : IimView(parent) {
     var itemView: TextView? = null
     override fun get(): View {
         itemView = TextView(context)

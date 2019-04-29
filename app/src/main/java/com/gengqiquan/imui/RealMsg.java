@@ -2,9 +2,11 @@ package com.gengqiquan.imui;
 
 public class RealMsg implements IimMsg {
     TXMsg txMsg;
+    boolean isSelf;
 
-    public RealMsg(TXMsg txMsg) {
+    public RealMsg(TXMsg txMsg, boolean isSelf) {
         this.txMsg = txMsg;
+        this.isSelf = isSelf;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class RealMsg implements IimMsg {
 
     @Override
     public boolean isSelf() {
-        return false;
+        return isSelf;
     }
 
 }
