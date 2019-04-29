@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -35,6 +36,12 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
         uiAdapter.notifyItemRangeInserted(0, oldData.size)
     }
 
+    fun newMsgs(oldData: MutableList<IimMsg>) {
+        val start = data.size
+        data.addAll(oldData)
+        uiAdapter.notifyItemRangeInserted(start, oldData.size)
+    }
+
     fun newMsg(msg: IimMsg) {
         data.add(msg)
         uiAdapter.notifyItemInserted(data.size)
@@ -54,4 +61,14 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
 
     private var imViewFactors = mutableListOf<IimViewFactory>(DefaultIMViewFactory(context))
 
+    companion object {
+        private var displayer: ImImageDisplayer? = null
+        fun setDisplayer(displayer: ImImageDisplayer) {
+            this.displayer = displayer
+        }
+
+        fun display(url: String, imageView: ImageView, after: (width: Int, height: Int) -> Unit) {
+            displayer?.display(url, imageView, after)
+        }
+    }
 }

@@ -1,27 +1,72 @@
 package com.gengqiquan.imui;
 
-public class RealMsg implements IimMsg {
-    TXMsg txMsg;
-    boolean isSelf;
+import com.tencent.imsdk.*;
+import org.jetbrains.annotations.NotNull;
 
-    public RealMsg(TXMsg txMsg, boolean isSelf) {
+public class RealMsg implements IimMsg {
+    TIMElem txMsg;
+    boolean isSelf;
+    String time;
+
+    public RealMsg(TIMElem txMsg, boolean isSelf) {
         this.txMsg = txMsg;
         this.isSelf = isSelf;
     }
 
+    public RealMsg(TIMElem txMsg, boolean isSelf, String time) {
+        this.txMsg = txMsg;
+        this.isSelf = isSelf;
+        this.time = time;
+    }
+
+    @Override
+    public String text() {
+        return ((TIMTextElem) txMsg).getText();
+    }
+
+    @Override
+    public ImImage img() {
+        TIMImage timImage = ((TIMImageElem) txMsg).getImageList().get(0);
+        return new ImImage(timImage.getUrl(), timImage.getWidth(), timImage.getHeight());
+    }
+
+    @NotNull
+    @Override
+    public String video() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public String sound() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public String time() {
+        return time;
+    }
+
     @Override
     public int uiType() {
-        if (txMsg.type == TXMsg.Type.TEXT)
-            return 1;
-        else if (txMsg.type == TXMsg.Type.IMG)
-            return 2;
-        else
-            return 3;
+        switch (txMsg.getType()) {
+            case Text:
+                return 1;
+            case Image:
+                return 2;
+            case Video:
+                return 3;
+            case Sound:
+                return 4;
+            default:
+                return 0;
+        }
     }
 
 
     @Override
-    public TXMsg realData() {
+    public TIMElem realData() {
         return txMsg;
     }
 
@@ -29,5 +74,6 @@ public class RealMsg implements IimMsg {
     public boolean isSelf() {
         return isSelf;
     }
+
 
 }

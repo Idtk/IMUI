@@ -13,7 +13,7 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
 
     }
 
-    override fun create(parent: ViewGroup, viewType: Int): IimView? {
+    override fun create(parent: ViewGroup, viewType: Int): ImView? {
         return when (viewType) {
             TEXT -> {
                 ImText(context,parent)

@@ -4,5 +4,5 @@ import android.view.ViewGroup
 
 interface IimViewFactory {
 
-    fun create(parent: ViewGroup, viewType: Int): IimView?
+    fun create(parent: ViewGroup, viewType: Int): ImView?
 }

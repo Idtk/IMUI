@@ -9,4 +9,19 @@
     <com.gengqiquan.imui.IMUI android:layout_width="match_parent"
                               android:id="@+id/im_ui"
                               android:layout_height="wrap_content"/>
+
+    <LinearLayout android:layout_gravity="bottom"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+        <EditText android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:id="@+id/et_text"
+                  android:layout_height="50dp"/>
+        <TextView android:layout_width="50dp" android:layout_height="50dp"
+                  android:id="@+id/tv_send"
+                  android:gravity="center"
+                  android:background="#2abcff"
+                  android:text="发送"
+        />
+    </LinearLayout>
 </FrameLayout>
