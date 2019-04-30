@@ -25,6 +25,7 @@ import com.tencent.imsdk.TIMMessage
 import com.tencent.imsdk.ext.message.TIMConversationExt
 import com.tencent.imsdk.ext.message.TIMManagerExt
 import org.jetbrains.anko.custom.async
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             })
             .setGroupEventListener { }
         userConfig.refreshListener = object : TIMRefreshListener {
-            override fun onRefreshConversation(msgs: MutableList<TIMConversation>?) {
+            override fun onRefreshConversation(msgs: MutableList<TIMConversation>) {
 
             }
 
@@ -109,6 +110,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
         TIMManager.getInstance().userConfig = userConfig
+        TIMManager.getInstance().addMessageListener(object : TIMMessageListener {
+            override fun onNewMessages(msgs: MutableList<TIMMessage>): Boolean {
+                val list = mutableListOf<IimMsg>()
+                msgs.forEach {
+                    if (it.elementCount == 0L) {
+                        return@forEach
+                    }
+//                            Log.e("sfsff", it.elementCount.toString());
+                    for (i in 0 until it.elementCount) {
+                        val ele = it.getElement(i.toInt())
+                        if (i == 0L) {
+                            list.add(RealMsg(ele, it.isSelf, Date(it.timestamp())))
+                        } else {
+                            list.add(RealMsg(ele, it.isSelf))
+                        }
+                    }
+
+                }
+                list.reverse()
+                im_ui.newMsgs(list)
+                return true
+            }
+        })
         TIMManager.getInstance().login(indent, sig, object : TIMCallBack {
             override fun onError(code: Int, desc: String) {
                 //错误码 code 和错误描述 desc，可用于定位请求失败原因
@@ -119,66 +143,86 @@ class MainActivity : AppCompatActivity() {
 
             override fun onSuccess() {
                 Log.d(tag, "getLocalMessage login succ")
-                val con = TIMManager.getInstance().getConversation(
-                    TIMConversationType.C2C,    //会话类型：单聊
-                    tel
-                )
-                TIMConversationExt(con).getLocalMessage(10, null, object : TIMValueCallBack<List<TIMMessage>> {
-                    override fun onSuccess(msgs: List<TIMMessage>) {
-                        val list = mutableListOf<IimMsg>()
-                        msgs.forEach {
-                            if (it.elementCount == 0L) {
-                                return@forEach
-                            }
-                            for (i in 0..it.elementCount) {
-                                val ele = it.getElement(i.toInt())
-                                if (ele == null) {
-                                    return@forEach
-                                }
-                                if (i == 0L) {
-                                    list.add(RealMsg(ele, it.isSelf, it.timestamp().toString()))
-                                } else {
-                                    list.add(RealMsg(ele, it.isSelf))
-                                }
-                            }
+                afterLogin()
 
-                        }
-                        list.reverse()
-                        im_ui.appendMsgs(list)
-
-                    }
-
-                    override fun onError(p0: Int, p1: String?) {
-                        Log.e(tag, "getLocalMessage" + p0.toString() + ":" + p1)
-                    }
-                })
             }
         })
 
-        tv_send.onClick {
-            val msg = TIMMessage()
 
+    }
+
+    fun afterLogin() {
+        val con = TIMManager.getInstance().getConversation(
+            TIMConversationType.C2C,    //会话类型：单聊
+            tel
+        )
+        TIMConversationExt(con).getLocalMessage(10, null, object : TIMValueCallBack<List<TIMMessage>> {
+            override fun onSuccess(msgs: List<TIMMessage>) {
+                val list = mutableListOf<IimMsg>()
+                msgs.forEach {
+                    if (it.elementCount == 0L) {
+                        return@forEach
+                    }
+//                            Log.e("sfsff", it.elementCount.toString());
+                    for (i in 0 until it.elementCount) {
+                        val ele = it.getElement(i.toInt())
+                        if (i == 0L) {
+                            list.add(RealMsg(ele, it.isSelf, Date(it.timestamp())))
+                        } else {
+                            list.add(RealMsg(ele, it.isSelf))
+                        }
+                    }
+
+                }
+                list.reverse()
+                im_ui.oldMsgs(list)
+
+            }
+
+            override fun onError(p0: Int, p1: String?) {
+                Log.e(tag, "getLocalMessage" + p0.toString() + ":" + p1)
+            }
+        })
+
+
+        im_input.sendAction {text,success ->
+            val msg = TIMMessage()
 //添加文本内容
             val elem = TIMTextElem()
-            elem.text = et_text.text.toString()
+            elem.text = text
 
 //将elem添加到消息
             if (msg.addElement(elem) != 0) {
                 Log.d(tag, "addElement failed")
-                return@onClick
+                return@sendAction
             }
-//            con.sendMessage(msg, object : TIMValueCallBack<TIMMessage> {
-//                override fun onSuccess(p0: TIMMessage?) {
-//                    Log.e(tag, "onSuccess" + p0.toString())
-//
-//                }
-//
-//                override fun onError(p0: Int, p1: String?) {
-//                    Log.e(tag, "onError" + p0.toString()+":"+p1)
-//                }
-//            })
-        }
+            con.sendMessage(msg, object : TIMValueCallBack<TIMMessage> {
+                override fun onSuccess(msg: TIMMessage) {
+                    success()
+                    Log.e(tag, "onSuccess" + msg.toString())
+                    val list = mutableListOf<IimMsg>()
+                    if (msg.elementCount == 0L) {
+                        return
+                    }
+//                            Log.e("sfsff", it.elementCount.toString());
+                    for (i in 0 until msg.elementCount) {
+                        val ele = msg.getElement(i.toInt())
+                        if (i == 0L) {
+                            list.add(RealMsg(ele, msg.isSelf, Date(msg.timestamp())))
+                        } else {
+                            list.add(RealMsg(ele, msg.isSelf))
+                        }
+                    }
 
+//                    list.reverse()
+                    im_ui.newMsgs(list)
+                }
+
+                override fun onError(p0: Int, p1: String?) {
+                    Log.e(tag, "onError" + p0.toString() + ":" + p1)
+                }
+            })
+        }
 
     }
 

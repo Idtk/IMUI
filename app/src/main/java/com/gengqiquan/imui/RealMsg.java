@@ -1,19 +1,24 @@
 package com.gengqiquan.imui;
 
+import android.annotation.SuppressLint;
+import androidx.annotation.MainThread;
 import com.tencent.imsdk.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RealMsg implements IimMsg {
     TIMElem txMsg;
     boolean isSelf;
-    String time;
+    Date time;
 
     public RealMsg(TIMElem txMsg, boolean isSelf) {
         this.txMsg = txMsg;
         this.isSelf = isSelf;
     }
 
-    public RealMsg(TIMElem txMsg, boolean isSelf, String time) {
+    public RealMsg(TIMElem txMsg, boolean isSelf, Date time) {
         this.txMsg = txMsg;
         this.isSelf = isSelf;
         this.time = time;
@@ -42,10 +47,37 @@ public class RealMsg implements IimMsg {
         return null;
     }
 
+    @SuppressLint("SimpleDateFormat")
+    private static SimpleDateFormat formatYear = new SimpleDateFormat("yyyy-MM-dd");
+    @SuppressLint("SimpleDateFormat")
+    private static SimpleDateFormat formatMonth = new SimpleDateFormat("MM-dd HH:mm");
+    @SuppressLint("SimpleDateFormat")
+    private static SimpleDateFormat formatHours = new SimpleDateFormat("HH:mm");
+
+    @MainThread
+    public static String format(Date record) {
+        record.setYear(record.getYear());
+        Date now = new Date();
+        if (now.getYear() != record.getYear()) {
+            return formatYear.format(record);
+        }
+        int days = now.getDay() - record.getDay();
+        if (days == 0) {
+            return formatHours.format(record);
+        }
+        if (days == 1) {
+            return "昨天 " + formatHours.format(record);
+        }
+        if (days == 2) {
+            return "前天 " + formatHours.format(record);
+        }
+        return formatMonth.format(record);
+    }
+
     @NotNull
     @Override
     public String time() {
-        return time;
+        return format(time);
     }
 
     @Override

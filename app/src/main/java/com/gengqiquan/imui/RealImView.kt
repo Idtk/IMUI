@@ -31,7 +31,7 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
                 leftPadding = dip(6)
                 rightPadding = dip(6)
                 layoutParams = LinearLayout.LayoutParams(wrapContent, dip(20)).apply {
-                    bottomMargin = dip(10)
+                    bottomMargin = dip(20)
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
 
