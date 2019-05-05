@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.CallSuper
-import androidx.core.view.marginBottom
+import com.gengqiquan.imui.interfaces.IimMsg
 import org.jetbrains.anko.*
 
 abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(parent) {
@@ -58,7 +57,8 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
 
     override fun decorator(item: IimMsg) {
         tv_header?.text = "小明"
-        tv_time?.text = item.time()
+        tv_time?.isShow(!item.time().isNullOrEmpty())
+        tv_time?.text = item.time() ?: ""
         if (item.isSelf()) {
             (tv_header?.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.RIGHT
         } else {

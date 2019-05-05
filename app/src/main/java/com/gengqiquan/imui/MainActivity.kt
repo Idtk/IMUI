@@ -6,25 +6,24 @@ import android.os.Bundle
 import android.os.Environment
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.target.Target
 import com.tencent.imsdk.*
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
-import android.R.attr.tag
 import android.util.Log
 import com.tencent.imsdk.TIMCallBack
 import com.tencent.imsdk.TIMManager
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import android.R.attr.tag
-import com.tencent.imsdk.TIMTextElem
+import com.gengqiquan.imui.help.IMHelp
+import com.gengqiquan.imui.help.MsgHelp
+import com.gengqiquan.imui.input.ButtonFactory
+import com.gengqiquan.imui.interfaces.IimMsg
+import com.gengqiquan.imui.interfaces.ImImageDisplayer
+import com.gengqiquan.imui.interfaces.OtherProxy
+import com.gengqiquan.imui.model.RealMsg
+import com.gengqiquan.qqresult.QQResult
 import com.tencent.imsdk.TIMMessage
 import com.tencent.imsdk.ext.message.TIMConversationExt
-import com.tencent.imsdk.ext.message.TIMManagerExt
-import org.jetbrains.anko.custom.async
+import com.xhe.photoalbum.PhotoAlbum
 import java.util.*
 
 
@@ -58,6 +57,7 @@ class MainActivity : AppCompatActivity() {
 //        )
 //        list.add(RealMsg(TXMsg("", "", TXMsg.Type.VIDEO), true))
 //        list.add(RealMsg(TXMsg("", "", TXMsg.Type.VIDEO), false))
+        IMHelp.init(applicationContext)
         IMUI.setDisplayer(object : ImImageDisplayer {
             override fun display(url: String, imageView: ImageView, after: (width: Int, height: Int) -> Unit) {
                 Glide.with(this@MainActivity)
@@ -184,21 +184,9 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
-        im_input.sendAction {text,success ->
-            val msg = TIMMessage()
-//添加文本内容
-            val elem = TIMTextElem()
-            elem.text = text
-
-//将elem添加到消息
-            if (msg.addElement(elem) != 0) {
-                Log.d(tag, "addElement failed")
-                return@sendAction
-            }
+        im_input.sendAction { type, msg ->
             con.sendMessage(msg, object : TIMValueCallBack<TIMMessage> {
                 override fun onSuccess(msg: TIMMessage) {
-                    success()
                     Log.e(tag, "onSuccess" + msg.toString())
                     val list = mutableListOf<IimMsg>()
                     if (msg.elementCount == 0L) {
@@ -223,7 +211,21 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
+        im_input.otherProxy(object : OtherProxy {
+            override fun proxy(type: Int, send: (TIMMessage) -> Unit) {
+                if (type == ButtonFactory.PICTURE) {
+                    QQResult.startActivityWith(
+                        this@MainActivity,
+                        PhotoAlbum(this@MainActivity).setLimitCount(4).albumIntent
+                    )
+                        .result {
+                            send(MsgHelp.buildImgMessage(PhotoAlbum.parseResult(it)))
+                        }
+                }
 
+            }
+
+        })
     }
 
     val tag = "immmmmm"

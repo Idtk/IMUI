@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
-import com.tencent.imsdk.TIMTextElem
+import com.gengqiquan.imui.interfaces.IimMsg
 import org.jetbrains.anko.*
 
-class ImText(context: Context, parent: ViewGroup) : RealImView(context, parent) {
+class ImTextView(context: Context, parent: ViewGroup) : RealImView(context, parent) {
     var tv_content: TextView? = null
     override fun createItemView(contentView: FrameLayout): View {
         return contentView.apply {

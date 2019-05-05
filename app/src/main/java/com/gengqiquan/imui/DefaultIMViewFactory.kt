@@ -2,6 +2,7 @@ package com.gengqiquan.imui
 
 import android.content.Context
 import android.view.ViewGroup
+import com.gengqiquan.imui.interfaces.IimViewFactory
 
 class DefaultIMViewFactory(val context: Context) : IimViewFactory {
     companion object {
@@ -16,13 +17,17 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
     override fun create(parent: ViewGroup, viewType: Int): ImView? {
         return when (viewType) {
             TEXT -> {
-                ImText(context,parent)
+                ImTextView(context, parent)
             }
             IMG -> {
-                ImImageView(context,parent)
+                ImImageView(context, parent)
+            }
+
+            AUDIO -> {
+                IMVideoView(context, parent)
             }
             VIDEO -> {
-                IMVideoView(context,parent)
+                IMVideoView(context, parent)
             }
             else -> null
         }

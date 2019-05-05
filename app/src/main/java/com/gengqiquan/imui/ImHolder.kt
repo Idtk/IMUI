@@ -2,6 +2,7 @@ package com.gengqiquan.imui
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.gengqiquan.imui.interfaces.IimViewFactory
 
 
 class ImHolder(val imView: ImView) : RecyclerView.ViewHolder(imView.get()) {

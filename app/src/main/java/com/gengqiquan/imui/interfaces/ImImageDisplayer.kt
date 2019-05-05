@@ -1,4 +1,4 @@
-package com.gengqiquan.imui
+package com.gengqiquan.imui.interfaces
 
 import android.widget.ImageView
 

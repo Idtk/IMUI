@@ -1,7 +1,9 @@
-package com.gengqiquan.imui;
+package com.gengqiquan.imui.model;
 
 import android.annotation.SuppressLint;
 import androidx.annotation.MainThread;
+import com.gengqiquan.imui.interfaces.IimMsg;
+import com.gengqiquan.imui.ImImage;
 import com.tencent.imsdk.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,7 +79,9 @@ public class RealMsg implements IimMsg {
     @NotNull
     @Override
     public String time() {
-        return format(time);
+        if (time != null)
+            return format(time);
+        return null;
     }
 
     @Override

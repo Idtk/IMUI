@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import com.tencent.imsdk.TIMImageElem
+import com.gengqiquan.imui.interfaces.IimMsg
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.imageView
-import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.wrapContent
 
 class ImImageView(context: Context, parent: ViewGroup) : RealImView(context, parent) {

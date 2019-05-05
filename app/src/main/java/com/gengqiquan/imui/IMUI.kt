@@ -7,11 +7,13 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.gengqiquan.imui.interfaces.IimMsg
+import com.gengqiquan.imui.interfaces.IimViewFactory
+import com.gengqiquan.imui.interfaces.ImImageDisplayer
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk27.coroutines.onFocusChange
-import org.jetbrains.anko.textView
 
 class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private val uiAdapter by lazy {

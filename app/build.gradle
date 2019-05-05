@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.gengqiquan.imui"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -39,4 +39,9 @@ dependencies {
 
     api 'com.tencent.imsdk:imsdk:4.3.81'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.gengqiquan:photoalbum:1.1.7'
+    implementation ('com.gengqiquan:QQResult:0.0.3'){
+//        exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'androidx.appcompat', module: 'appcompat'
+    }
 }

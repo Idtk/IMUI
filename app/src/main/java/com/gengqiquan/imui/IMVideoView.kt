@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.gengqiquan.imui.interfaces.IimMsg
 import com.tencent.imsdk.TIMVideoElem
 
 class IMVideoView(val context: Context,parent: ViewGroup) : ImView(parent) {
