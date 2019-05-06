@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.widget.doOnTextChanged
 import com.gengqiquan.imui.*
@@ -93,7 +94,7 @@ class IMInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
                     inAudio = !inAudio
                     tv_audio?.isShow(inAudio)
                     et_text?.isShow(!inAudio)
-                    background = resources.getDrawable(if (inAudio) R.drawable.im_voice else R.drawable.im_voice)
+                    background = resources.getDrawable(if (inAudio) R.drawable.im_keyboard else R.drawable.im_voice)
                 }
                 background = resources.getDrawable(R.drawable.im_voice)
             }.lparams(dip(26), dip(26)) {
@@ -135,6 +136,11 @@ class IMInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
                 onClick {
                     onClick {
                         gv_button?.isShow(gv_button!!.visibility == View.GONE)
+                        if (gv_button!!.visibility != View.GONE) {
+                            closeKeybord(et_text!!)
+                        } else {
+                            openKeybord(et_text!!)
+                        }
                     }
                 }
                 background = resources.getDrawable(R.drawable.im_other)
@@ -302,7 +308,7 @@ class IMInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
 
 
     private var send: (Int, TIMMessage) -> Unit = { type, msg -> }
-//
+    //
 //    fun addIMViewFactory(imViewFactory: IimViewFactory) {
 //        imViewFactors.add(0, imViewFactory)
 //
@@ -320,6 +326,24 @@ class IMInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
 //            displayer?.display(url, imageView, after)
 //        }
 //    }
+    private fun openKeybord(mEditText: EditText) {
+        val imm = context
+            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(mEditText, InputMethodManager.RESULT_SHOWN)
+        imm.toggleSoftInput(
+            InputMethodManager.SHOW_FORCED,
+            InputMethodManager.HIDE_IMPLICIT_ONLY
+        )
+    }
+
+    /**
+     * 关闭软键盘
+     *
+     */
+    private fun closeKeybord(mEditText: EditText) {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(mEditText.windowToken, InputMethodManager.RESULT_UNCHANGED_SHOWN)
+    }
 
     inline fun View.dip(value: Int): Int = context.dip(value)
     inline fun View.dip(value: Float): Int = context.dip(value)

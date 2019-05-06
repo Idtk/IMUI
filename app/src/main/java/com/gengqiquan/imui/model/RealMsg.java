@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.tencent.imsdk.TIMElemType.Sound;
+
 public class RealMsg implements IimMsg {
     TIMElem txMsg;
     boolean isSelf;
@@ -46,7 +48,15 @@ public class RealMsg implements IimMsg {
     @NotNull
     @Override
     public String sound() {
-        return null;
+        return ((TIMSoundElem) txMsg).getPath();
+    }
+
+    @Override
+    public long duration() {
+        if (Sound == txMsg.getType()) {
+            return ((TIMSoundElem) txMsg).getDuration();
+        }
+        return 0;
     }
 
     @SuppressLint("SimpleDateFormat")

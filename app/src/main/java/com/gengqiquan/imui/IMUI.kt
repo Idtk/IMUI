@@ -2,11 +2,14 @@ package com.gengqiquan.imui
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.*
+import com.gengqiquan.imui.interfaces.IMoreOldMsgListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import com.gengqiquan.imui.interfaces.IimViewFactory
 import com.gengqiquan.imui.interfaces.ImImageDisplayer
@@ -19,17 +22,23 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
     private val uiAdapter by lazy {
         object : RecyclerView.Adapter<ImHolder>() {
             override fun getItemViewType(position: Int): Int {
-                return data[position].uiType()
+                if (allInit == 1 && position == 0) {
+                    return DefaultIMViewFactory.MORE_REFRESH
+                }
+                return data[position - allInit].uiType()
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImHolder {
                 return ImHolder.get(imViewFactors, parent, viewType)
             }
 
-            override fun getItemCount() = data.size
+            override fun getItemCount() = data.size + allInit
 
             override fun onBindViewHolder(holder: ImHolder, position: Int) {
-                holder.imView.decorator(data[position])
+                if (allInit == 1 && position == 0) {
+                    return
+                }
+                holder.imView.decorator(data[position - allInit])
             }
         }
     }
@@ -37,19 +46,23 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
 
     private var data: MutableList<IimMsg> = arrayListOf()
     fun oldMsgs(oldData: MutableList<IimMsg>) {
+        allInit = 1
         data.addAll(0, oldData)
         uiAdapter.notifyItemRangeInserted(0, oldData.size)
         scrollToNeed(oldData.size - 1)
+        mIsLoadMore = false
     }
 
-    fun newMsgs(oldData: MutableList<IimMsg>) {
+    fun newMsgs(newData: MutableList<IimMsg>) {
+        allInit = 1
         val start = data.size
-        data.addAll(oldData)
-        uiAdapter.notifyItemRangeInserted(start, oldData.size)
+        data.addAll(newData)
+        uiAdapter.notifyItemRangeInserted(start, newData.size)
         scrollToNeed(data.size - 1)
     }
 
     fun newMsg(msg: IimMsg) {
+        allInit = 1
         data.add(msg)
         uiAdapter.notifyItemInserted(data.size)
         scrollToNeed(data.size - 1)
@@ -63,20 +76,62 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
 
     init {
         listUI = recyclerView {
+            overScrollMode = View.OVER_SCROLL_NEVER
             layoutManager = LinearLayoutManager(context)
             adapter = uiAdapter
-            bottomPadding=dip(15)
+            bottomPadding = dip(15)
             onFocusChange { v, hasFocus ->
-                if (!hasFocus){
-                    scrollToNeed(data.size-1)
+                if (!hasFocus) {
+                    scrollToNeed(data.size - 1)
                 }
             }
+            setOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (!mIsLoadMore && allInit == 1 && (newState == SCROLL_STATE_IDLE || newState == SCROLL_STATE_SETTLING)) {
+                        if (isLastItemVisible(recyclerView)) {
+                            mIsLoadMore = true
+                            moreOldMsgListener?.more()
+                        }
+                    }
+                }
+            })
         }
+    }
+
+    var mIsLoadMore = false
+    private var moreOldMsgListener: IMoreOldMsgListener? = null
+    fun setMoreOldmoreOldMsgListener(listener: IMoreOldMsgListener) {
+        moreOldMsgListener = listener
+    }
+
+    private var allInit = 0
+    fun allInit() {
+        allInit = 0
+        mIsLoadMore = false
+        uiAdapter.notifyDataSetChanged()
+    }
+
+    private fun isLastItemVisible(recyclerView: RecyclerView): Boolean {
+        val adapter = recyclerView.getAdapter()
+
+        if (null == adapter || adapter!!.getItemCount() == 0) {
+            return true
+        }
+
+        val lastVisiblePosition =
+            (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition();
+
+        if (lastVisiblePosition == 0) {
+            val lastVisibleChild = recyclerView.getChildAt(0)
+            if (lastVisibleChild != null) {
+                return lastVisibleChild.getTop() <= recyclerView.getTop()
+            }
+        }
+        return false
     }
 
     fun addImViewFactory(imViewFactory: IimViewFactory) {
         imViewFactors.add(0, imViewFactory)
-
     }
 
     private var imViewFactors = mutableListOf<IimViewFactory>(DefaultIMViewFactory(context))

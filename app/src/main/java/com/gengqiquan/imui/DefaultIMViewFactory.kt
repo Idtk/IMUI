@@ -11,7 +11,7 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
         val VIDEO = 3
         val AUDIO = 4
         val SHARE = 5
-
+        val MORE_REFRESH = 0xF007F
     }
 
     override fun create(parent: ViewGroup, viewType: Int): ImView? {
@@ -22,12 +22,14 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
             IMG -> {
                 ImImageView(context, parent)
             }
-
             AUDIO -> {
-                IMVideoView(context, parent)
+                ImAudioView(context, parent)
             }
             VIDEO -> {
                 IMVideoView(context, parent)
+            }
+            MORE_REFRESH -> {
+                IMLoadMoreView(context, parent)
             }
             else -> null
         }

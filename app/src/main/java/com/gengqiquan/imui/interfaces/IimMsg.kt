@@ -10,5 +10,6 @@ interface IimMsg {
     fun sound(): String
     fun img(): ImImage
     fun isSelf(): Boolean
+    fun duration(): Long
     fun <T> realData(): T
 }

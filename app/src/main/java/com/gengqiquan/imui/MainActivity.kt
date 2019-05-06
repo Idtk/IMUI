@@ -16,6 +16,7 @@ import com.tencent.imsdk.TIMManager
 import com.gengqiquan.imui.help.IMHelp
 import com.gengqiquan.imui.help.MsgHelp
 import com.gengqiquan.imui.input.ButtonFactory
+import com.gengqiquan.imui.interfaces.IMoreOldMsgListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import com.gengqiquan.imui.interfaces.ImImageDisplayer
 import com.gengqiquan.imui.interfaces.OtherProxy
@@ -156,34 +157,51 @@ class MainActivity : AppCompatActivity() {
             TIMConversationType.C2C,    //会话类型：单聊
             tel
         )
-        TIMConversationExt(con).getLocalMessage(10, null, object : TIMValueCallBack<List<TIMMessage>> {
-            override fun onSuccess(msgs: List<TIMMessage>) {
-                val list = mutableListOf<IimMsg>()
-                msgs.forEach {
-                    if (it.elementCount == 0L) {
-                        return@forEach
+
+        fun loadMore() {
+            val count = 10
+            TIMConversationExt(con).getLocalMessage(count, lastMsg, object : TIMValueCallBack<List<TIMMessage>> {
+                override fun onSuccess(msgs: List<TIMMessage>) {
+                    Log.e(tag, "getLocalMessage" + msgs.size.toString() )
+                    if (msgs.size < count) {
+                        im_ui.allInit()
                     }
-//                            Log.e("sfsff", it.elementCount.toString());
-                    for (i in 0 until it.elementCount) {
-                        val ele = it.getElement(i.toInt())
-                        if (i == 0L) {
-                            list.add(RealMsg(ele, it.isSelf, Date(it.timestamp())))
-                        } else {
-                            list.add(RealMsg(ele, it.isSelf))
+                    if (msgs.isEmpty()) {
+                        return
+                    }
+                    lastMsg = msgs.last()
+                    val list = mutableListOf<IimMsg>()
+                    msgs.forEach {
+                        if (it.elementCount == 0L) {
+                            return@forEach
                         }
+//                            Log.e("sfsff", it.elementCount.toString());
+                        for (i in 0 until it.elementCount) {
+                            val ele = it.getElement(i.toInt())
+                            if (i == 0L) {
+                                list.add(RealMsg(ele, it.isSelf, Date(it.timestamp())))
+                            } else {
+                                list.add(RealMsg(ele, it.isSelf))
+                            }
+                        }
+
                     }
+                    list.reverse()
+                    im_ui.oldMsgs(list)
 
                 }
-                list.reverse()
-                im_ui.oldMsgs(list)
 
-            }
-
-            override fun onError(p0: Int, p1: String?) {
-                Log.e(tag, "getLocalMessage" + p0.toString() + ":" + p1)
+                override fun onError(p0: Int, p1: String?) {
+                    Log.e(tag, "getLocalMessage" + p0.toString() + ":" + p1)
+                }
+            })
+        }
+        loadMore()
+        im_ui.setMoreOldmoreOldMsgListener(object : IMoreOldMsgListener {
+            override fun more() {
+                loadMore()
             }
         })
-
         im_input.sendAction { type, msg ->
             con.sendMessage(msg, object : TIMValueCallBack<TIMMessage> {
                 override fun onSuccess(msg: TIMMessage) {
@@ -228,6 +246,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    var lastMsg: TIMMessage? = null
     val tag = "immmmmm"
     val tel = "129a14e8a4b3a123"
     val indent = "8849cc559d324811"
