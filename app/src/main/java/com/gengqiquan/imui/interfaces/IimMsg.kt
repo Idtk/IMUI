@@ -1,6 +1,6 @@
 package com.gengqiquan.imui.interfaces
 
-import com.gengqiquan.imui.ImImage
+import com.gengqiquan.imui.model.ImImage
 
 interface IimMsg {
     fun uiType(): Int

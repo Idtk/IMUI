@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.gengqiquan.imui.help.LongPressHelp
 import com.gengqiquan.imui.interfaces.IimMsg
+import com.gengqiquan.imui.model.MenuAction
 import org.jetbrains.anko.*
 
 abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(parent) {
@@ -65,8 +67,23 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
             (tv_header?.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.LEFT
         }
         decoratorItemView(item)
+        floatBaseView().setOnLongClickListener {
+
+            LongPressHelp.showPopAction(
+                context,
+                getMenuAction(LongPressHelp.getActions()),
+                parent.rootView,
+                floatBaseView()
+            )
+            true
+        }
+    }
+
+    open fun getMenuAction(actions: MutableList<MenuAction>): MutableList<MenuAction> {
+        return actions
     }
 
     fun dip(value: Int) = itemView!!.dip(value)
     abstract fun decoratorItemView(item: IimMsg)
+    abstract fun floatBaseView(): View
 }

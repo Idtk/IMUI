@@ -8,10 +8,20 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.gengqiquan.imui.interfaces.IimMsg
+import com.gengqiquan.imui.model.MenuAction
 import org.jetbrains.anko.*
 
 class ImTextView(context: Context, parent: ViewGroup) : RealImView(context, parent) {
+    override fun floatBaseView() = tv_content!!
+
     var tv_content: TextView? = null
+    override fun getMenuAction(actions: MutableList<MenuAction>): MutableList<MenuAction> {
+        val list = mutableListOf<MenuAction>()
+        list.add(MenuAction("复制"))
+        list.addAll(super.getMenuAction(actions))
+        return list
+    }
+
     override fun createItemView(contentView: FrameLayout): View {
         return contentView.apply {
             tv_content = textView {

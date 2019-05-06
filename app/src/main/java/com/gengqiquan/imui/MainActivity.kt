@@ -11,15 +11,18 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.tencent.imsdk.*
 import kotlinx.android.synthetic.main.activity_main.*
 import android.util.Log
+import android.view.MotionEvent
 import com.tencent.imsdk.TIMCallBack
 import com.tencent.imsdk.TIMManager
 import com.gengqiquan.imui.help.IMHelp
+import com.gengqiquan.imui.help.LongPressHelp
 import com.gengqiquan.imui.help.MsgHelp
 import com.gengqiquan.imui.input.ButtonFactory
 import com.gengqiquan.imui.interfaces.IMoreOldMsgListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import com.gengqiquan.imui.interfaces.ImImageDisplayer
 import com.gengqiquan.imui.interfaces.OtherProxy
+import com.gengqiquan.imui.model.MenuAction
 import com.gengqiquan.imui.model.RealMsg
 import com.gengqiquan.qqresult.QQResult
 import com.tencent.imsdk.TIMMessage
@@ -29,11 +32,11 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
 //        val list = arrayListOf<RealMsg>()
 //        list.add(RealMsg(TXMsg("你好", "", TXMsg.Type.TEXT), true))
 //        list.add(RealMsg(TXMsg("你好防水防汗首付开上飞洒放松放松,你好防水防汗首付开上飞洒放松放松", "", TXMsg.Type.TEXT), false))
@@ -66,8 +69,8 @@ class MainActivity : AppCompatActivity() {
                     .asBitmap()
                     .into(object : SimpleTarget<Bitmap>() {
                         override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                            imageView.setImageBitmap(resource)
                             after(resource!!.width, resource.height)
+                            imageView.setImageBitmap(resource)
                         }
                     })
             }
@@ -122,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                     for (i in 0 until it.elementCount) {
                         val ele = it.getElement(i.toInt())
                         if (i == 0L) {
-                            list.add(RealMsg(ele, it.isSelf, Date(it.timestamp())))
+                            list.add(RealMsg(ele, it.isSelf, Date(it.timestamp()* 1000)))
                         } else {
                             list.add(RealMsg(ele, it.isSelf))
                         }
@@ -162,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             val count = 10
             TIMConversationExt(con).getLocalMessage(count, lastMsg, object : TIMValueCallBack<List<TIMMessage>> {
                 override fun onSuccess(msgs: List<TIMMessage>) {
-                    Log.e(tag, "getLocalMessage" + msgs.size.toString() )
+                    Log.e(tag, "getLocalMessage" + msgs.size.toString())
                     if (msgs.size < count) {
                         im_ui.allInit()
                     }
@@ -179,7 +182,7 @@ class MainActivity : AppCompatActivity() {
                         for (i in 0 until it.elementCount) {
                             val ele = it.getElement(i.toInt())
                             if (i == 0L) {
-                                list.add(RealMsg(ele, it.isSelf, Date(it.timestamp())))
+                                list.add(RealMsg(ele, it.isSelf, Date(it.timestamp()* 1000)))
                             } else {
                                 list.add(RealMsg(ele, it.isSelf))
                             }
@@ -214,7 +217,7 @@ class MainActivity : AppCompatActivity() {
                     for (i in 0 until msg.elementCount) {
                         val ele = msg.getElement(i.toInt())
                         if (i == 0L) {
-                            list.add(RealMsg(ele, msg.isSelf, Date(msg.timestamp())))
+                            list.add(RealMsg(ele, msg.isSelf, Date(msg.timestamp()* 1000)))
                         } else {
                             list.add(RealMsg(ele, msg.isSelf))
                         }
@@ -244,6 +247,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+        var list = mutableListOf<MenuAction>()
+        list.add(MenuAction("撤回"))
+        list.add(MenuAction("删除"))
+        LongPressHelp.init(list)
     }
 
     var lastMsg: TIMMessage? = null

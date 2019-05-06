@@ -3,12 +3,13 @@ package com.gengqiquan.imui.model;
 import android.annotation.SuppressLint;
 import androidx.annotation.MainThread;
 import com.gengqiquan.imui.interfaces.IimMsg;
-import com.gengqiquan.imui.ImImage;
 import com.tencent.imsdk.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static com.tencent.imsdk.TIMElemType.Sound;
 
@@ -60,7 +61,7 @@ public class RealMsg implements IimMsg {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private static SimpleDateFormat formatYear = new SimpleDateFormat("yyyy-MM-dd");
+    private static SimpleDateFormat formatYear = new SimpleDateFormat("yyyy年MM月dd日");
     @SuppressLint("SimpleDateFormat")
     private static SimpleDateFormat formatMonth = new SimpleDateFormat("MM-dd HH:mm");
     @SuppressLint("SimpleDateFormat")
@@ -68,12 +69,12 @@ public class RealMsg implements IimMsg {
 
     @MainThread
     public static String format(Date record) {
-        record.setYear(record.getYear());
         Date now = new Date();
-        if (now.getYear() != record.getYear()) {
-            return formatYear.format(record);
-        }
+//        if (now.getYear() != record.getYear()) {
+//            return formatYear.format(record) + tag + formatHours.format(record);
+//        }
         int days = now.getDay() - record.getDay();
+
         if (days == 0) {
             return formatHours.format(record);
         }
@@ -83,8 +84,16 @@ public class RealMsg implements IimMsg {
         if (days == 2) {
             return "前天 " + formatHours.format(record);
         }
-        return formatMonth.format(record);
+        if (days <= 7) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(record);
+            int weekday = c.get(Calendar.DAY_OF_WEEK);
+            return "星期" + weekStr[weekday] + " " + formatHours.format(record);
+        }
+        return formatYear.format(record) + " " + formatHours.format(record);
     }
+
+    final static String[] weekStr = new String[]{"日", "一", "二", "三", "四", "五", "六",};
 
     @NotNull
     @Override

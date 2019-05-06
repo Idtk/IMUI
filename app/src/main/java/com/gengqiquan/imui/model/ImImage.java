@@ -1,4 +1,4 @@
-package com.gengqiquan.imui;
+package com.gengqiquan.imui.model;
 
 public class ImImage {
     private String url;

@@ -2,25 +2,26 @@ package com.gengqiquan.imui.input
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.AnimationDrawable
 import android.util.AttributeSet
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.widget.doOnTextChanged
-import com.gengqiquan.imui.*
+import com.gengqiquan.imui.DefaultIMViewFactory
+import com.gengqiquan.imui.R
 import com.gengqiquan.imui.audio.InputHandler
 import com.gengqiquan.imui.audio.UIKitAudioArmMachine
 import com.gengqiquan.imui.help.MsgHelp
 import com.gengqiquan.imui.interfaces.OtherProxy
+import com.gengqiquan.imui.isShow
 import com.gengqiquan.imui.model.ButtonInfo
+import com.gengqiquan.imui.singleClick
 import com.tencent.imsdk.TIMMessage
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
 
-class IMInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
+class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
 
     private val uiAdapter by lazy {
         object : BaseAdapter() {
@@ -212,95 +213,17 @@ class IMInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
         )
     }
 
-    private var sendAble: Boolean = false
-    private var audioCancel: Boolean = false
-    private var startRecordY: Float = 0.toFloat()
-    var inputHandler: InputHandler? = null
+
     private fun audioView(parent: LinearLayout) {
         parent.apply {
-            tv_audio = textView {
-                background = resources.getDrawable(R.drawable.im_edit_back)
-                includeFontPadding = false
-                textColor = Color.BLACK
-                textSize = 18f
-                gravity = Gravity.CENTER
-                text = "按住 说话"
-                visibility = View.GONE
-                setOnTouchListener(object : OnTouchListener {
-                    private var start: Long = 0
-                    override fun onTouch(v: View, motionEvent: MotionEvent): Boolean {
-                        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                            audioCancel = true
-                            startRecordY = motionEvent.getY()
-                            this@textView.apply {
-                                background = resources.getDrawable(R.drawable.im_audio_back)
-                                text = "松开 结束"
-                            }
-                            inputHandler?.startRecording()
-                            start = System.currentTimeMillis()
-                            UIKitAudioArmMachine.getInstance().startRecord {
-                                if (inputHandler != null) {
-                                    if (audioCancel) {
-                                        inputHandler?.stopRecording()
-                                        return@startRecord
-                                    }
-                                    if (it < 500) {
-                                        inputHandler?.tooShortRecording()
-                                        return@startRecord
-                                    }
-                                    inputHandler?.stopRecording()
-                                    this@textView.apply {
-                                        background = resources.getDrawable(R.drawable.im_edit_back)
-                                        text = "按住 说话"
-                                    }
-                                }
-
-                                send?.invoke(
-                                    DefaultIMViewFactory.AUDIO, MsgHelp.buildAudioMessage(
-                                        UIKitAudioArmMachine.getInstance().recordAudioPath,
-                                        it.toInt()
-                                    )
-                                )
-                            }
-
-                        } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                            if (motionEvent.getY() - startRecordY < -100) {
-                                audioCancel = true
-                                inputHandler?.cancelRecording()
-                                this@textView.apply {
-                                    background = resources.getDrawable(R.drawable.im_edit_back)
-                                    text = "按住 说话"
-                                }
-                            } else {
-                                audioCancel = false
-                                inputHandler?.startRecording()
-                                this@textView.apply {
-                                    background = resources.getDrawable(R.drawable.im_audio_back)
-                                    text = "松开 结束"
-                                }
-                            }
-
-                        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-
-                            audioCancel = motionEvent.getY() - startRecordY < -100
-                            this@textView.apply {
-                                background = resources.getDrawable(R.drawable.im_edit_back)
-                                text = "按住 说话"
-                            }
-                            UIKitAudioArmMachine.getInstance().stopRecord()
-                        }
-                        return true
-                    }
-                })
-                layoutParams = LinearLayout.LayoutParams(0, dip(38)).apply {
-                    topMargin = dip(8)
-                    bottomMargin = dip(8)
-                    weight = 1f
-                }
+            tv_audio = ImAudioInputView(context) {
+                send.invoke(DefaultIMViewFactory.AUDIO, it)
             }
+            addView(tv_audio)
         }
 
     }
+
 
     fun sendAction(action: (Int, TIMMessage) -> Unit) {
         send = action

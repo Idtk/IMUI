@@ -8,13 +8,12 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.WindowManager
+import android.widget.*
 import com.gengqiquan.imui.audio.UIKitAudioArmMachine
 import com.gengqiquan.imui.help.ToastHelp
 import com.gengqiquan.imui.interfaces.IimMsg
+import com.gengqiquan.imui.model.MenuAction
 import org.jetbrains.anko.*
 
 class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, parent) {
@@ -22,7 +21,8 @@ class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, par
     var tv_time: TextView? = null
     var tv_time_self: TextView? = null
     var iv_play: ImageView? = null
-    var ll_item: LinearLayout? = null
+
+    override fun floatBaseView() = fl_content!!
     override fun createItemView(contentView: FrameLayout): View {
         return contentView.apply {
             linearLayout {
