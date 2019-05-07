@@ -8,56 +8,78 @@ import com.tencent.imsdk.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
-import static com.tencent.imsdk.TIMElemType.Sound;
+import java.util.List;
 
 public class RealMsg implements IimMsg {
-    TIMElem txMsg;
-    boolean isSelf;
+    TIMMessage timMsg;
     Date time;
+    TIMElem elem;
 
-    public RealMsg(TIMElem txMsg, boolean isSelf) {
-        this.txMsg = txMsg;
-        this.isSelf = isSelf;
+
+    private RealMsg(TIMMessage timMsg, TIMElem elem, Date time) {
+        this.timMsg = timMsg;
+        this.elem = elem;
+        this.time = time;
     }
 
-    public RealMsg(TIMElem txMsg, boolean isSelf, Date time) {
-        this.txMsg = txMsg;
-        this.isSelf = isSelf;
-        this.time = time;
+    public static List<RealMsg> create(TIMMessage timMsg) {
+        List<RealMsg> list = new ArrayList<>();
+        if (timMsg.getElementCount() == 0L) {
+            return list;
+        }
+        for (int i = 0; i < timMsg.getElementCount(); i++) {
+            TIMElem ele = timMsg.getElement(i);
+            Date time = i == timMsg.getElementCount() - 1 ? new Date(timMsg.timestamp() * 1000) : null;
+            list.add(new RealMsg(timMsg, ele, time));
+        }
+        return list;
     }
 
     @Override
     public String text() {
-        return ((TIMTextElem) txMsg).getText();
+        if (elem.getType() != TIMElemType.Text) {
+            throw new IllegalArgumentException("can not call img() that is not of the type: Text");
+        }
+        return ((TIMTextElem) elem).getText();
     }
 
     @Override
     public ImImage img() {
-        TIMImage timImage = ((TIMImageElem) txMsg).getImageList().get(0);
+        if (elem.getType() != TIMElemType.Image) {
+            throw new IllegalArgumentException("can not call img() that is not of the type: image");
+        }
+        TIMImage timImage = ((TIMImageElem) elem).getImageList().get(0);
         return new ImImage(timImage.getUrl(), timImage.getWidth(), timImage.getHeight());
     }
 
     @NotNull
     @Override
     public String video() {
+        if (elem.getType() != TIMElemType.Video) {
+            throw new IllegalArgumentException("can not call img() that is not of the type: Video");
+        }
         return null;
     }
+
 
     @NotNull
     @Override
     public String sound() {
-        return ((TIMSoundElem) txMsg).getPath();
+        if (elem.getType() != TIMElemType.Sound) {
+            throw new IllegalArgumentException("can not call img() that is not of the type: sound");
+        }
+        return ((TIMSoundElem) elem).getPath();
     }
 
     @Override
     public long duration() {
-        if (Sound == txMsg.getType()) {
-            return ((TIMSoundElem) txMsg).getDuration();
+        if (elem.getType() != TIMElemType.Sound) {
+            throw new IllegalArgumentException("can not call img() that is not of the type: sound");
         }
-        return 0;
+        return ((TIMSoundElem) elem).getDuration();
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -105,7 +127,7 @@ public class RealMsg implements IimMsg {
 
     @Override
     public int uiType() {
-        switch (txMsg.getType()) {
+        switch (elem.getType()) {
             case Text:
                 return 1;
             case Image:
@@ -121,13 +143,13 @@ public class RealMsg implements IimMsg {
 
 
     @Override
-    public TIMElem realData() {
-        return txMsg;
+    public TIMMessage realData() {
+        return timMsg;
     }
 
     @Override
     public boolean isSelf() {
-        return isSelf;
+        return timMsg.isSelf();
     }
 
 

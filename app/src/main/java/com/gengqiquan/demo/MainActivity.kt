@@ -125,19 +125,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNewMessages(msgs: MutableList<TIMMessage>): Boolean {
                 val list = mutableListOf<IimMsg>()
                 msgs.forEach {
-                    if (it.elementCount == 0L) {
-                        return@forEach
-                    }
-//                            Log.e("sfsff", it.elementCount.toString());
-                    for (i in 0 until it.elementCount) {
-                        val ele = it.getElement(i.toInt())
-                        if (i == 0L) {
-                            list.add(RealMsg(ele, it.isSelf, Date(it.timestamp() * 1000)))
-                        } else {
-                            list.add(RealMsg(ele, it.isSelf))
-                        }
-                    }
-
+                    list.addAll(RealMsg.create(it))
                 }
                 list.reverse()
                 im_ui.newMsgs(list)
@@ -183,19 +171,7 @@ class MainActivity : AppCompatActivity() {
                     lastMsg = msgs.last()
                     val list = mutableListOf<IimMsg>()
                     msgs.forEach {
-                        if (it.elementCount == 0L) {
-                            return@forEach
-                        }
-//                            Log.e("sfsff", it.elementCount.toString());
-                        for (i in 0 until it.elementCount) {
-                            val ele = it.getElement(i.toInt())
-                            if (i == 0L) {
-                                list.add(RealMsg(ele, it.isSelf, Date(it.timestamp() * 1000)))
-                            } else {
-                                list.add(RealMsg(ele, it.isSelf))
-                            }
-                        }
-
+                        list.addAll(RealMsg.create(it))
                     }
                     list.reverse()
                     im_ui.oldMsgs(list)
@@ -218,18 +194,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onSuccess(msg: TIMMessage) {
                     Log.e(tag, "onSuccess" + msg.toString())
                     val list = mutableListOf<IimMsg>()
-                    if (msg.elementCount == 0L) {
-                        return
-                    }
-//                            Log.e("sfsff", it.elementCount.toString());
-                    for (i in 0 until msg.elementCount) {
-                        val ele = msg.getElement(i.toInt())
-                        if (i == 0L) {
-                            list.add(RealMsg(ele, msg.isSelf, Date(msg.timestamp() * 1000)))
-                        } else {
-                            list.add(RealMsg(ele, msg.isSelf))
-                        }
-                    }
+                    list.addAll(RealMsg.create(msg))
 
 //                    list.reverse()
                     im_ui.newMsgs(list)
