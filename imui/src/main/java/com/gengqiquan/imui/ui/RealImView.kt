@@ -70,7 +70,7 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
         floatBaseView().setOnLongClickListener {
 
             LongPressHelp.showPopAction(
-                context,
+                context,item.realData(),
                 getMenuAction(LongPressHelp.getActions()),
                 parent.rootView,
                 floatBaseView()

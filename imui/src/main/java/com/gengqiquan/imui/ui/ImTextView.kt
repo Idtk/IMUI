@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.gengqiquan.imui.R
 import com.gengqiquan.imui.interfaces.IimMsg
+import com.gengqiquan.imui.model.MenuAction
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.textView
@@ -18,9 +19,11 @@ class ImTextView(context: Context, parent: ViewGroup) : RealImView(context, pare
     override fun floatBaseView() = tv_content!!
 
     var tv_content: TextView? = null
-    override fun getMenuAction(actions: MutableList<com.gengqiquan.imui.model.MenuAction>): MutableList<com.gengqiquan.imui.model.MenuAction> {
-        val list = mutableListOf<com.gengqiquan.imui.model.MenuAction>()
-        list.add(com.gengqiquan.imui.model.MenuAction("复制"))
+    override fun getMenuAction(actions: MutableList<MenuAction>): MutableList<MenuAction> {
+        val list = mutableListOf<MenuAction>()
+        list.add(MenuAction("复制") {
+
+        })
         list.addAll(super.getMenuAction(actions))
         return list
     }

@@ -8,6 +8,7 @@ import android.widget.PopupWindow
 import com.gengqiquan.imui.R
 import com.gengqiquan.imui.model.MenuAction
 import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 object LongPressHelp {
     private var actions: MutableList<MenuAction> = mutableListOf()
@@ -16,13 +17,13 @@ object LongPressHelp {
         actions = newActions
     }
 
-    fun showPopAction(context: Context, list: List<MenuAction>, windowView: View, itemView: View) {
+    fun showPopAction(context: Context, data: Any, list: List<MenuAction>, windowView: View, itemView: View) {
         val width = itemView.dip(50)
         val height = itemView.dip(40)
         val content = LinearLayout(context).apply {
-//            layoutParams = LinearLayout.LayoutParams(wrapContent, height)
-            background=resources.getDrawable(R.drawable.im_pop_back)
-            list.mapIndexed { index, it ->
+            //            layoutParams = LinearLayout.LayoutParams(wrapContent, height)
+            background = resources.getDrawable(R.drawable.im_pop_back)
+            list.mapIndexed { index, menuAction ->
                 if (index != 0) {
                     view {
                         backgroundColor = Color.WHITE
@@ -30,11 +31,12 @@ object LongPressHelp {
                     }
                 }
                 textView {
-                    text = it.text
+                    text = menuAction.text
                     textSize = 16f
                     textColor = Color.WHITE
                     gravity = Gravity.CENTER
                     layoutParams = LinearLayout.LayoutParams(width, matchParent)
+                    onClick { menuAction.action.action(data) }
                 }
             }
         }

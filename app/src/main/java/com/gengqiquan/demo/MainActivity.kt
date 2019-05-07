@@ -29,6 +29,7 @@ import com.gengqiquan.imui.ui.IMUI
 import com.gengqiquan.qqresult.QQResult
 import com.tencent.imsdk.TIMMessage
 import com.tencent.imsdk.ext.message.TIMConversationExt
+import com.tencent.imsdk.ext.message.TIMUserConfigMsgExt
 import com.xhe.photoalbum.PhotoAlbum
 import java.util.*
 
@@ -115,7 +116,11 @@ class MainActivity : AppCompatActivity() {
             override fun onRefresh() {
             }
         }
-        TIMManager.getInstance().userConfig = userConfig
+
+        TIMManager.getInstance().userConfig = TIMUserConfigMsgExt(userConfig)
+            .setMessageReceiptListener {
+                // TODO: 2019-05-07 监听撤回消息 
+            }
         TIMManager.getInstance().addMessageListener(object : TIMMessageListener {
             override fun onNewMessages(msgs: MutableList<TIMMessage>): Boolean {
                 val list = mutableListOf<IimMsg>()
@@ -162,10 +167,11 @@ class MainActivity : AppCompatActivity() {
             TIMConversationType.C2C,    //会话类型：单聊
             tel
         )
-
+        val conversationExt = TIMConversationExt(con)
         fun loadMore() {
             val count = 10
-            TIMConversationExt(con).getLocalMessage(count, lastMsg, object : TIMValueCallBack<List<TIMMessage>> {
+
+            conversationExt.getLocalMessage(count, lastMsg, object : TIMValueCallBack<List<TIMMessage>> {
                 override fun onSuccess(msgs: List<TIMMessage>) {
                     Log.e(tag, "getLocalMessage" + msgs.size.toString())
                     if (msgs.size < count) {
@@ -250,8 +256,19 @@ class MainActivity : AppCompatActivity() {
 
         })
         var list = mutableListOf<MenuAction>()
-        list.add(MenuAction("撤回"))
-        list.add(MenuAction("删除"))
+        list.add(MenuAction("撤回") {
+            conversationExt.revokeMessage(it as TIMMessage, object : TIMCallBack {
+                override fun onSuccess() {
+
+                }
+
+                override fun onError(p0: Int, p1: String?) {
+                }
+            })
+        })
+        list.add(MenuAction("删除") {
+
+        })
         LongPressHelp.init(list)
     }
 
