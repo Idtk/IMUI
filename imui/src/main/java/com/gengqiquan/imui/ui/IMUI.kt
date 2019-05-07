@@ -45,10 +45,14 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
 
 
     private var data: MutableList<IimMsg> = arrayListOf()
-    fun oldMsgs(oldData: MutableList<IimMsg>) {
+    fun oldMsgs(oldData: MutableList<IimMsg>, init: Boolean = false) {
+        if (init) {
+            data.clear()
+        }
         allInit = 1
         data.addAll(0, oldData)
-        uiAdapter.notifyItemRangeInserted(0, oldData.size)
+//        uiAdapter.notifyItemRangeInserted(0, oldData.size)
+        uiAdapter.notifyDataSetChanged()
         scrollToNeed(oldData.size - 1)
         mIsLoadMore = false
     }
@@ -57,7 +61,8 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
         allInit = 1
         val start = data.size
         data.addAll(newData)
-        uiAdapter.notifyItemRangeInserted(start, newData.size)
+//        uiAdapter.notifyItemRangeInserted(start, newData.size)
+        uiAdapter.notifyDataSetChanged()
         scrollToNeed(data.size - 1)
     }
 

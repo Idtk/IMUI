@@ -1,5 +1,7 @@
 package com.gengqiquan.imui.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
@@ -22,7 +24,8 @@ class ImTextView(context: Context, parent: ViewGroup) : RealImView(context, pare
     override fun getMenuAction(actions: MutableList<MenuAction>): MutableList<MenuAction> {
         val list = mutableListOf<MenuAction>()
         list.add(MenuAction("复制") {
-
+            val clip = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clip.primaryClip = ClipData.newPlainText("text", tv_content?.text.toString())
         })
         list.addAll(super.getMenuAction(actions))
         return list

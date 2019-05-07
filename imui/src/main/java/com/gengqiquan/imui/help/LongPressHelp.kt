@@ -20,6 +20,8 @@ object LongPressHelp {
     fun showPopAction(context: Context, data: Any, list: List<MenuAction>, windowView: View, itemView: View) {
         val width = itemView.dip(50)
         val height = itemView.dip(40)
+        val popup =
+            PopupWindow(WindowManager.LayoutParams.WRAP_CONTENT, height)
         val content = LinearLayout(context).apply {
             //            layoutParams = LinearLayout.LayoutParams(wrapContent, height)
             background = resources.getDrawable(R.drawable.im_pop_back)
@@ -36,7 +38,10 @@ object LongPressHelp {
                     textColor = Color.WHITE
                     gravity = Gravity.CENTER
                     layoutParams = LinearLayout.LayoutParams(width, matchParent)
-                    onClick { menuAction.action.action(data) }
+                    onClick {
+                        popup.dismiss()
+                        menuAction.action.action(data)
+                    }
                 }
             }
         }
@@ -44,8 +49,9 @@ object LongPressHelp {
         itemView.getLocationOnScreen(location)
         var x = location[0] + itemView.measuredWidth / 2 - width * list.size / 2
         var y = location[1] - height
-        val popup =
-            PopupWindow(content, WindowManager.LayoutParams.WRAP_CONTENT, height)
+
+
+        popup.contentView = content
         popup.isOutsideTouchable = true
         popup.isFocusable = true
 //        content.rootView.setOnTouchListener { v, event ->

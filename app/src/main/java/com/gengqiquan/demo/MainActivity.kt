@@ -24,11 +24,13 @@ import com.gengqiquan.imlib.RealMsg
 import com.gengqiquan.imlib.TIMViewFactory
 import com.gengqiquan.imlib.audio.TIMAudioRecorder
 import com.gengqiquan.imlib.audio.TIMMsgBuilder
+import com.gengqiquan.imui.help.ToastHelp
 import com.gengqiquan.imui.model.MenuAction
 import com.gengqiquan.imui.ui.IMUI
 import com.gengqiquan.qqresult.QQResult
 import com.tencent.imsdk.TIMMessage
 import com.tencent.imsdk.ext.message.TIMConversationExt
+import com.tencent.imsdk.ext.message.TIMMessageExt
 import com.tencent.imsdk.ext.message.TIMUserConfigMsgExt
 import com.xhe.photoalbum.PhotoAlbum
 import java.util.*
@@ -168,14 +170,14 @@ class MainActivity : AppCompatActivity() {
                     if (msgs.isEmpty()) {
                         return
                     }
-                    lastMsg = msgs.last()
+
                     val list = mutableListOf<IimMsg>()
                     msgs.forEach {
                         list.addAll(RealMsg.create(it))
                     }
                     list.reverse()
-                    im_ui.oldMsgs(list)
-
+                    im_ui.oldMsgs(list, lastMsg == null)
+                    lastMsg = msgs.last()
                 }
 
                 override fun onError(p0: Int, p1: String?) {
@@ -222,17 +224,27 @@ class MainActivity : AppCompatActivity() {
         })
         var list = mutableListOf<MenuAction>()
         list.add(MenuAction("撤回") {
+            Log.e(tag, "调用撤回")
             conversationExt.revokeMessage(it as TIMMessage, object : TIMCallBack {
                 override fun onSuccess() {
-
+                    // TODO: 2019-05-07 撤回成功
+                    Log.e(tag, "撤回成功")
                 }
 
                 override fun onError(p0: Int, p1: String?) {
+                    ToastHelp.toastShortMessage("只能撤回2分钟以内的消息")
+                    Log.e(tag, "撤回失败" + p0.toString() + ":" + p1)
                 }
             })
         })
         list.add(MenuAction("删除") {
-
+            if (!TIMMessageExt(it as TIMMessage).remove()) {
+                Log.e(tag, "删除失败")
+                return@MenuAction
+            }
+            lastMsg = null
+            loadMore()
+            Log.e(tag, "删除成功")
         })
         LongPressHelp.init(list)
     }
