@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.gengqiquan.imui.help.IMHelp
+import com.gengqiquan.imui.interfaces.DisplayListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.imageView
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.wrapContent
 
 class ImImageView(context: Context, parent: ViewGroup) : RealImView(context, parent) {
@@ -60,8 +63,19 @@ class ImImageView(context: Context, parent: ViewGroup) : RealImView(context, par
             height = newHeight
 
         }
-        IMUI.display(url, iv_img!!)
-    }
+        IMHelp.getImageDisplayer().display(url, iv_img!!, object : DisplayListener {
+            override fun ready() {
+                iv_img?.singleClick {
+                    context.startActivity<ImagePreviewActivity>(IMHelp.IMAGE_PATH to url)
+                }
+            }
 
+            override fun error() {
+            }
+
+            override fun start() {
+            }
+        })
+    }
 
 }

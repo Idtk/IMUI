@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.gengqiquan.imlib">
     <application>
-        <activity android:name=".video.CameraActivity"/>
+        <activity android:name=".video.CameraActivity"
+                  android:screenOrientation="portrait"/>
         <activity android:name=".video.VideoViewActivity"/>
     </application>
 </manifest>

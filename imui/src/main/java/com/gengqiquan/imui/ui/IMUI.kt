@@ -5,14 +5,13 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.*
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING
 import com.gengqiquan.imui.interfaces.IMoreOldMsgListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import com.gengqiquan.imui.interfaces.IimViewFactory
-import com.gengqiquan.imui.interfaces.ImImageDisplayer
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -29,7 +28,7 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImHolder {
-                return ImHolder.get(imViewFactors, parent, viewType)
+                return ImHolder.get( parent, viewType)
             }
 
             override fun getItemCount() = data.size + allInit
@@ -136,20 +135,6 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
         return false
     }
 
-    fun addImViewFactory(imViewFactory: IimViewFactory) {
-        imViewFactors.add(0, imViewFactory)
-    }
 
     private var imViewFactors = mutableListOf<IimViewFactory>(DefaultIMViewFactory(context))
-
-    companion object {
-        private var displayer: ImImageDisplayer? = null
-        fun setDisplayer(displayer: ImImageDisplayer) {
-            Companion.displayer = displayer
-        }
-
-        fun display(url: String, imageView: ImageView, after: (width: Int, height: Int) -> Unit = { w, h -> }) {
-            displayer?.display(url, imageView, after)
-        }
-    }
 }

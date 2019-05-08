@@ -115,7 +115,7 @@ public class ImCameraView extends FrameLayout implements CameraInterface.CameraO
                 TypedValue.COMPLEX_UNIT_SP, 35, getResources().getDisplayMetrics()));
         iconMargin = a.getDimensionPixelSize(R.styleable.ImCameraView_iconMargin, (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
-        iconSrc = a.getResourceId(R.styleable.ImCameraView_iconSrc, R.drawable.ic_camera);
+        iconSrc = a.getResourceId(R.styleable.ImCameraView_iconSrc, R.drawable.im_switch);
         iconLeft = a.getResourceId(R.styleable.ImCameraView_iconLeft, 0);
         iconRight = a.getResourceId(R.styleable.ImCameraView_iconRight, 0);
         duration = a.getInteger(R.styleable.ImCameraView_duration_max, IMHelp.getVideoRecordMaxTime() * 1000);       //没设置默认为10s

@@ -9,11 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.TextView
 import com.gengqiquan.imlib.video.VideoViewActivity
 import com.gengqiquan.imlib.video.util.FileUtil
 import com.gengqiquan.imui.help.IMHelp
-import com.gengqiquan.imui.interfaces.IMediaListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import com.gengqiquan.imui.ui.*
 import com.tencent.imsdk.TIMCallBack
@@ -82,10 +80,10 @@ class IMVideoView(context: Context, parent: ViewGroup) : RealImView(context, par
 
         val imagePath = IMHelp.getImagePath() + snapshot.uuid
         if (!TextUtils.isEmpty(videoElem.snapshotPath)) {
-            IMUI.display(videoElem.snapshotPath, iv_img!!)
+            IMHelp.getImageDisplayer().display(videoElem.snapshotPath, iv_img!!)
         } else if (FileUtil.exists(imagePath)) {
             videoElem.snapshotPath = imagePath
-            IMUI.display(imagePath, iv_img!!)
+            IMHelp.getImageDisplayer().display(imagePath, iv_img!!)
         } else {
 //            imgReady.start()
 
@@ -104,7 +102,7 @@ class IMVideoView(context: Context, parent: ViewGroup) : RealImView(context, par
 
                 override fun onSuccess() {
                     videoElem.snapshotPath = imagePath
-                    IMUI.display(imagePath, iv_img!!)
+                    IMHelp.getImageDisplayer().display(imagePath, iv_img!!)
                 }
             })
         }

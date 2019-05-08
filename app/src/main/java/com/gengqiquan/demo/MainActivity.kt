@@ -17,10 +17,6 @@ import com.tencent.imsdk.TIMManager
 import com.gengqiquan.imui.help.IMHelp
 import com.gengqiquan.imui.help.LongPressHelp
 import com.gengqiquan.imui.input.ButtonFactory
-import com.gengqiquan.imui.interfaces.IMoreOldMsgListener
-import com.gengqiquan.imui.interfaces.IimMsg
-import com.gengqiquan.imui.interfaces.ImImageDisplayer
-import com.gengqiquan.imui.interfaces.OtherProxy
 import com.gengqiquan.imlib.RealMsg
 import com.gengqiquan.imlib.TIMViewFactory
 import com.gengqiquan.imlib.audio.TIMAudioRecorder
@@ -28,6 +24,7 @@ import com.gengqiquan.imlib.audio.TIMMsgBuilder
 import com.gengqiquan.imlib.video.CameraActivity
 import com.gengqiquan.imlib.video.listener.MediaCallBack
 import com.gengqiquan.imui.help.ToastHelp
+import com.gengqiquan.imui.interfaces.*
 import com.gengqiquan.imui.model.MenuAction
 import com.gengqiquan.imui.ui.IMUI
 import com.gengqiquan.qqresult.QQResult
@@ -67,21 +64,20 @@ class MainActivity : AppCompatActivity() {
 //        )
 //        list.add(RealMsg(TXMsg("", "", TXMsg.Type.VIDEO), true))
 //        list.add(RealMsg(TXMsg("", "", TXMsg.Type.VIDEO), false))
-        IMHelp.init(applicationContext, TIMAudioRecorder(), TIMMsgBuilder())
-        im_ui.addImViewFactory(TIMViewFactory(this))
-        IMUI.setDisplayer(object : ImImageDisplayer {
-            override fun display(url: String, imageView: ImageView, after: (width: Int, height: Int) -> Unit) {
+        IMHelp.init(applicationContext, TIMAudioRecorder(), TIMMsgBuilder(), object : ImImageDisplayer {
+            override fun display(url: String, imageView: ImageView, listener: DisplayListener?) {
                 Glide.with(this@MainActivity)
                     .load(url)
                     .asBitmap()
                     .into(object : SimpleTarget<Bitmap>() {
                         override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                            after(resource!!.width, resource.height)
                             imageView.setImageBitmap(resource)
+                            listener?.ready()
                         }
                     })
             }
         })
+        IMHelp.addImViewFactory(TIMViewFactory(this))
 //        im_ui.appendMsgs(list.toMutableList())
         TIMManager.getInstance().init(
             applicationContext, TIMSdkConfig(1400205051)

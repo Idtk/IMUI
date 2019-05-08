@@ -11,8 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:duration_max="10000"
-            app:iconLeft="@drawable/im_back"
+            app:iconLeft="@drawable/im_down"
             app:iconMargin="20dp"
-            app:iconRight="@drawable/im_picture"
             app:iconSize="30dp"/>
 </LinearLayout>

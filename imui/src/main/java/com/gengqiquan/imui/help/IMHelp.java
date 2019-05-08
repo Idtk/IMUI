@@ -3,12 +3,20 @@ package com.gengqiquan.imui.help;
 import android.content.Context;
 import com.gengqiquan.imui.interfaces.IAudioRecorder;
 import com.gengqiquan.imui.interfaces.IMsgBuildPolicy;
+import com.gengqiquan.imui.interfaces.IimViewFactory;
+import com.gengqiquan.imui.interfaces.ImImageDisplayer;
+import com.gengqiquan.imui.ui.DefaultIMViewFactory;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * 文件路径提供辅助类
+ * 即时通讯调度类。
+ * 提供各种文件路径
+ * 提供各种工厂 ：聊天view工厂
+ * 提供各种策略：消息生成策略。图片展示策略
  *
  * @author gengqiquan
  * @date 2019/4/3 4:02 PM
@@ -25,6 +33,22 @@ public class IMHelp {
 
     public static IMsgBuildPolicy getMsgBuildPolicy() {
         return msgBuildPolicy;
+    }
+
+    private static ImImageDisplayer imageDisplayer;
+
+    public static ImImageDisplayer getImageDisplayer() {
+        return imageDisplayer;
+    }
+
+    private static List<IimViewFactory> viewFactory = new ArrayList();
+
+    public static void addImViewFactory(IimViewFactory imViewFactory) {
+        viewFactory.add(0, imViewFactory);
+    }
+
+    public static List<IimViewFactory> getImViewFactory() {
+        return viewFactory;
     }
 
     private static IAudioRecorder audioRecord;
@@ -54,14 +78,16 @@ public class IMHelp {
     }
 
 
-    public static void init(Context context, IAudioRecorder recorder, IMsgBuildPolicy buildPolicy) {
+    public static void init(Context context, IAudioRecorder recorder, IMsgBuildPolicy buildPolicy, ImImageDisplayer dispalyer) {
         if (pathProvider == null) {
             synchronized (IMHelp.class) {
                 if (pathProvider == null) {
                     applicationContext = context;
                     pathProvider = new PathProvider(applicationContext);
+                    viewFactory.add(new DefaultIMViewFactory(context));
                     msgBuildPolicy = buildPolicy;
                     audioRecord = recorder;
+                    imageDisplayer = dispalyer;
                 }
             }
         }
