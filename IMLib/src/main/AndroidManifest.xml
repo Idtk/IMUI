@@ -2,6 +2,7 @@
           package="com.gengqiquan.imlib">
     <application>
         <activity android:name=".video.CameraActivity"
+                  android:theme="@style/Theme.AppCompat.NoActionBar"
                   android:screenOrientation="portrait"/>
         <activity android:name=".video.VideoViewActivity"/>
     </application>
