@@ -1,4 +1,4 @@
-package com.gengqiquan.imlib.audio
+package com.gengqiquan.imlib
 
 import android.content.Context
 import android.graphics.Color
@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.gengqiquan.imlib.audio.UIKitAudioArmMachine
 import com.gengqiquan.imui.R
 import com.gengqiquan.imui.help.ToastHelp
 import com.gengqiquan.imui.interfaces.IimMsg
@@ -69,7 +70,7 @@ class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, par
 
         m = dip(50)
         var length = getLength(0, item.duration())
-        (fl_content?.layoutParams as LinearLayout.LayoutParams).apply {
+        fl_content?.layoutParams= (fl_content?.layoutParams as LinearLayout.LayoutParams).apply {
             width = length
         }
         tv_time_self?.isShow(item.isSelf())

@@ -13,7 +13,7 @@ public class UIKitAudioArmMachine {
 
     private boolean playing, innerRecording;
     private volatile Boolean recording = false;
-    public static String CURRENT_RECORD_FILE = IMHelp.getAudioPath().getAbsolutePath();
+    public static String CURRENT_RECORD_FILE = IMHelp.getAudioPath();
     private AudioRecordCallback mRecordCallback;
     private AudioPlayCallback mPlayCallback;
 

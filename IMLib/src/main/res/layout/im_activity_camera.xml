@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <com.gengqiquan.imlib.video.ImCameraView
+            android:id="@+id/jcameraview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:duration_max="10000"
+            app:iconLeft="@drawable/im_back"
+            app:iconMargin="20dp"
+            app:iconRight="@drawable/im_picture"
+            app:iconSize="30dp"/>
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.gengqiquan.demo
 
+import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,6 +25,8 @@ import com.gengqiquan.imlib.RealMsg
 import com.gengqiquan.imlib.TIMViewFactory
 import com.gengqiquan.imlib.audio.TIMAudioRecorder
 import com.gengqiquan.imlib.audio.TIMMsgBuilder
+import com.gengqiquan.imlib.video.CameraActivity
+import com.gengqiquan.imlib.video.listener.MediaCallBack
 import com.gengqiquan.imui.help.ToastHelp
 import com.gengqiquan.imui.model.MenuAction
 import com.gengqiquan.imui.ui.IMUI
@@ -33,7 +36,6 @@ import com.tencent.imsdk.ext.message.TIMConversationExt
 import com.tencent.imsdk.ext.message.TIMMessageExt
 import com.tencent.imsdk.ext.message.TIMUserConfigMsgExt
 import com.xhe.photoalbum.PhotoAlbum
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,6 +127,7 @@ class MainActivity : AppCompatActivity() {
             }
         TIMManager.getInstance().addMessageListener(object : TIMMessageListener {
             override fun onNewMessages(msgs: MutableList<TIMMessage>): Boolean {
+                Log.d(tag, "新消息" + msgs.size)
                 val list = mutableListOf<IimMsg>()
                 msgs.forEach {
                     list.addAll(RealMsg.create(it))
@@ -161,9 +164,32 @@ class MainActivity : AppCompatActivity() {
         fun loadMore() {
             val count = 10
 
-            conversationExt.getLocalMessage(count, lastMsg, object : TIMValueCallBack<List<TIMMessage>> {
+//            conversationExt.getLocalMessage(count, lastMsg, object : TIMValueCallBack<List<TIMMessage>> {
+//                override fun onSuccess(msgs: List<TIMMessage>) {
+//                    Log.e(tag, "getLocalMessage" + msgs.size.toString())
+//                    if (msgs.size < count) {
+//                        im_ui.allInit()
+//                    }
+//                    if (msgs.isEmpty()) {
+//                        return
+//                    }
+//
+//                    val list = mutableListOf<IimMsg>()
+//                    msgs.forEach {
+//                        list.addAll(RealMsg.create(it))
+//                    }
+//                    list.reverse()
+//                    im_ui.oldMsgs(list, lastMsg == null)
+//                    lastMsg = msgs.last()
+//                }
+//
+//                override fun onError(p0: Int, p1: String?) {
+//                    Log.e(tag, "getLocalMessage" + p0.toString() + ":" + p1)
+//                }
+//            })
+            conversationExt.getMessage(count, lastMsg, object : TIMValueCallBack<List<TIMMessage>> {
                 override fun onSuccess(msgs: List<TIMMessage>) {
-                    Log.e(tag, "getLocalMessage" + msgs.size.toString())
+                    Log.e(tag, "获取漫游消息" + msgs.size.toString())
                     if (msgs.size < count) {
                         im_ui.allInit()
                     }
@@ -181,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onError(p0: Int, p1: String?) {
-                    Log.e(tag, "getLocalMessage" + p0.toString() + ":" + p1)
+                    Log.e(tag, "获取漫游消息失败" + p0.toString() + ":" + p1)
                 }
             })
         }
@@ -215,8 +241,31 @@ class MainActivity : AppCompatActivity() {
                         PhotoAlbum(this@MainActivity).setLimitCount(4).albumIntent
                     )
                         .result {
-                            send(IMHelp.getMsgBuildPolicy().buildImgMessage(PhotoAlbum.parseResult(it)) as TIMMessage)
+                            send(IMHelp.getMsgBuildPolicy().buildImgMessage(PhotoAlbum.parseResult(it)))
                         }
+                    return
+                }
+                if (type == ButtonFactory.CAMERA) {
+                    val captureIntent = Intent(this@MainActivity, CameraActivity::class.java)
+                    CameraActivity.mCallBack = object : MediaCallBack {
+                        override fun onImageSuccess(path: String) {
+                            send(IMHelp.getMsgBuildPolicy().buildImgMessage(arrayListOf(path)))
+                        }
+
+                        override fun onVideoSuccess(videoData: Intent) {
+                            val imgPath = videoData.getStringExtra("image_path")
+                            val videoPath = videoData.getStringExtra("video_path")
+                            val imgWidth = videoData.getIntExtra("width", 0)
+                            val imgHeight = videoData.getIntExtra("height", 0)
+                            val duration = videoData.getLongExtra("duration", 0)
+                            val msg =
+                                IMHelp.getMsgBuildPolicy()
+                                    .buildVideoMessage(imgPath, videoPath, imgWidth, imgHeight, duration)
+                            send(msg)
+                        }
+                    }
+                    startActivity(captureIntent)
+                    return
                 }
 
             }

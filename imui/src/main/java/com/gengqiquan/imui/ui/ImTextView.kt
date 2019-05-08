@@ -48,19 +48,10 @@ class ImTextView(context: Context, parent: ViewGroup) : RealImView(context, pare
 
     override fun decoratorItemView(item: IimMsg) {
         tv_content?.text = item.text()
-        if (item.isSelf()) {
-            (tv_content?.layoutParams as FrameLayout.LayoutParams).apply {
-                gravity = Gravity.RIGHT
-//                rightMargin = tv_content!!.dip(63)
-            }
-            tv_content?.background = context.resources.getDrawable(R.drawable.im_text_self)
-        } else {
-            (tv_content?.layoutParams as FrameLayout.LayoutParams).apply {
-                gravity = Gravity.LEFT
-//                leftMargin = tv_content!!.dip(63)
-            }
-            tv_content?.background = context.resources.getDrawable(R.drawable.im_text)
+        tv_content?.layoutParams = (tv_content?.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT
         }
+        tv_content?.setBackgroundResource(if (item.isSelf()) R.drawable.im_text_self else R.drawable.im_text)
     }
 
 

@@ -1,12 +1,11 @@
 package com.gengqiquan.imlib.audio;
 
+import android.net.Uri;
 import com.gengqiquan.imui.interfaces.IMsgBuildPolicy;
-import com.tencent.imsdk.TIMImageElem;
-import com.tencent.imsdk.TIMMessage;
-import com.tencent.imsdk.TIMSoundElem;
-import com.tencent.imsdk.TIMTextElem;
+import com.tencent.imsdk.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.List;
 
 public class TIMMsgBuilder implements IMsgBuildPolicy {
@@ -40,6 +39,28 @@ public class TIMMsgBuilder implements IMsgBuildPolicy {
             elem.setPath(path);
             TIMMsg.addElement(elem);
         }
+        return TIMMsg;
+    }
+
+    @Override
+    public TIMMessage buildVideoMessage(String imgPath, String videoPath, int width, int height, long duration) {
+        TIMMessage TIMMsg = new TIMMessage();
+        TIMVideoElem ele = new TIMVideoElem();
+
+        TIMVideo video = new TIMVideo();
+        video.setDuaration(duration / 1000);
+        video.setType("mp4");
+        TIMSnapshot snapshot = new TIMSnapshot();
+
+        snapshot.setWidth(width);
+        snapshot.setHeight(height);
+        ele.setSnapshot(snapshot);
+        ele.setVideo(video);
+        ele.setSnapshotPath(imgPath);
+        ele.setVideoPath(videoPath);
+
+        TIMMsg.addElement(ele);
+
         return TIMMsg;
     }
 

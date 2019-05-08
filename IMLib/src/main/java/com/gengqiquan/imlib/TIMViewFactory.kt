@@ -2,7 +2,6 @@ package com.gengqiquan.imlib
 
 import android.content.Context
 import android.view.ViewGroup
-import com.gengqiquan.imlib.audio.ImAudioView
 import com.gengqiquan.imui.interfaces.IimViewFactory
 import com.gengqiquan.imui.ui.*
 
@@ -17,7 +16,6 @@ class TIMViewFactory(val context: Context) : IimViewFactory {
             DefaultIMViewFactory.VIDEO -> {
                 IMVideoView(context, parent)
             }
-
             else -> null
         }
     }

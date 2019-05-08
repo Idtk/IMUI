@@ -15,6 +15,9 @@ import java.util.UUID;
  */
 public class IMHelp {
     final static String TAG = "MediaHelp";
+    public final static String IMAGE_PATH = "IMAGE_PATH";
+    public final static String VIDEO_PATH = "VIDEO_PATH";
+    public final static String AUDIO_PATH = "AUDIO_PATH";
 
 
     private static final long LIMIT_SIZE = 100 * 1024 * 1024;//100MB防止后面压缩没有空间了
@@ -30,8 +33,16 @@ public class IMHelp {
         return audioRecord;
     }
 
-    public static File getAudioPath() {
-        return pathProvider.audioDir("audio");
+    public static String getAudioPath() {
+        return pathProvider.mediaDir("audio").getAbsolutePath();
+    }
+
+    public static String getImagePath() {
+        return pathProvider.mediaDir("image").getAbsolutePath();
+    }
+
+    public static String getVideoPath() {
+        return pathProvider.mediaDir("video").getAbsolutePath();
     }
 
     public static int getAudioRecordMaxTime() {
@@ -75,7 +86,7 @@ public class IMHelp {
             return context.getDir("photo", Context.MODE_PRIVATE);
         }
 
-        File audioDir(String type) {
+        File mediaDir(String type) {
             File file = new File(CACHE_DIR, type + File.separator);
             if (!file.exists()) {
                 file.mkdirs();

@@ -1,5 +1,6 @@
 package com.gengqiquan.imui.ui
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gengqiquan.imui.interfaces.IimViewFactory
@@ -26,6 +27,7 @@ class ImHolder(val imView: ImView) : RecyclerView.ViewHolder(imView.get()) {
                 if (imView != null)
                     break
             }
+            Log.d("ViewFactors",viewType.toString())
             return imView!!
         }
     }

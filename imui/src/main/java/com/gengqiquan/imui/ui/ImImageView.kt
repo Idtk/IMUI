@@ -52,7 +52,7 @@ class ImImageView(context: Context, parent: ViewGroup) : RealImView(context, par
                 newHeight = max
                 iv_img?.scaleType = ImageView.ScaleType.CENTER_INSIDE
             }
-            (iv_img?.layoutParams as FrameLayout.LayoutParams).apply {
+            iv_img?.layoutParams = (iv_img?.layoutParams as FrameLayout.LayoutParams).apply {
                 gravity = if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT
                 width = newWidth
                 height = newHeight

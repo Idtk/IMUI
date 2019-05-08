@@ -17,7 +17,7 @@ public class UIKitAudioMachine {
     static final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT; //音频编码率
 
 
-    public static String CURRENT_RECORD_FILE = IMHelp.getAudioPath().getAbsolutePath();
+    public static String CURRENT_RECORD_FILE = IMHelp.getAudioPath();
     private AudioRecordCallback mRecordCallback;
     private AudioPlayCallback mPlayCallback;
     private AudioTrack audioTrack;

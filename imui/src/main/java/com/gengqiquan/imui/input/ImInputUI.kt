@@ -132,13 +132,11 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
             }
             iv_other = imageView {
                 onClick {
-                    onClick {
-                        gv_button?.isShow(gv_button!!.visibility == View.GONE)
-                        if (gv_button!!.visibility != View.GONE) {
-                            closeKeybord(et_text!!)
-                        } else {
-                            openKeybord(et_text!!)
-                        }
+                    gv_button?.isShow(gv_button!!.visibility == View.GONE)
+                    if (gv_button!!.visibility != View.GONE) {
+                        closeKeybord(et_text!!)
+                    } else {
+                        openKeybord(et_text!!)
                     }
                 }
                 background = resources.getDrawable(R.drawable.im_other)

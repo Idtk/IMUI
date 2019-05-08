@@ -25,7 +25,9 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
             MORE_REFRESH -> {
                 IMLoadMoreView(context, parent)
             }
-            else -> null
+            else -> {
+                ImUnknowView(context, parent)
+            }
         }
     }
 

@@ -58,19 +58,17 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
     abstract fun createItemView(contentView: FrameLayout): View
 
     override fun decorator(item: IimMsg) {
+        tv_header?.layoutParams = (tv_header?.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT
+        }
         tv_header?.text = "小明"
         tv_time?.isShow(!item.time().isNullOrEmpty())
         tv_time?.text = item.time() ?: ""
-        if (item.isSelf()) {
-            (tv_header?.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.RIGHT
-        } else {
-            (tv_header?.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.LEFT
-        }
         decoratorItemView(item)
         floatBaseView().setOnLongClickListener {
 
             LongPressHelp.showPopAction(
-                context,item.realData(),
+                context, item.realData(),
                 getMenuAction(LongPressHelp.getActions()),
                 parent.rootView,
                 floatBaseView()
