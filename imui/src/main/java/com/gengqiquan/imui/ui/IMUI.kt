@@ -148,7 +148,7 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
             Companion.displayer = displayer
         }
 
-        fun display(url: String, imageView: ImageView, after: (width: Int, height: Int) -> Unit) {
+        fun display(url: String, imageView: ImageView, after: (width: Int, height: Int) -> Unit = { w, h -> }) {
             displayer?.display(url, imageView, after)
         }
     }

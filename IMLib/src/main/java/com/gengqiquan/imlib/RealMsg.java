@@ -98,74 +98,14 @@ public class RealMsg implements IimMsg {
 
     @NotNull
     @Override
-    public void video(final IMediaListener imgReady, final IMediaListener videoReady) {
+    public ImVideo video() {
         if (elem.getType() != TIMElemType.Video) {
             throw new IllegalArgumentException("can not call img() that is not of the type: Video");
         }
         final TIMVideoElem videoElem = (TIMVideoElem) elem;
         TIMSnapshot snapshot = videoElem.getSnapshotInfo();
         TIMVideo videoInfo = videoElem.getVideoInfo();
-        final String imagePath = IMHelp.getImagePath() + snapshot.getUuid();
-        if (!TextUtils.isEmpty(videoElem.getSnapshotPath())) {
-            imgReady.ready(videoElem.getSnapshotPath());
-        } else if (FileUtil.exists(imagePath)) {
-            imgReady.ready(imagePath);
-        } else {
-            imgReady.start();
-
-            snapshot.getImage(imagePath, new TIMValueCallBack<ProgressInfo>() {
-                @Override
-                public void onError(int i, String s) {
-
-                }
-
-                @Override
-                public void onSuccess(ProgressInfo progressInfo) {
-                    imgReady.loading(progressInfo.getCurrentSize(), progressInfo.getTotalSize());
-                }
-            }, new TIMCallBack() {
-                @Override
-                public void onError(int i, String s) {
-                    imgReady.error();
-                }
-
-                @Override
-                public void onSuccess() {
-                    videoElem.setSnapshotPath(imagePath);
-                    imgReady.ready(imagePath);
-                }
-            });
-        }
-        final String videoPath = IMHelp.getVideoPath() + videoInfo.getUuid();
-        if (!TextUtils.isEmpty(videoElem.getVideoPath())) {
-            videoReady.ready(videoElem.getVideoPath());
-        } else if (FileUtil.exists(imagePath)) {
-            videoReady.ready(videoPath);
-        } else {
-            videoReady.start();
-            videoInfo.getVideo(videoPath, new TIMValueCallBack<ProgressInfo>() {
-                @Override
-                public void onError(int i, String s) {
-
-                }
-
-                @Override
-                public void onSuccess(ProgressInfo progressInfo) {
-                    videoReady.loading(progressInfo.getCurrentSize(), progressInfo.getTotalSize());
-                }
-            }, new TIMCallBack() {
-                @Override
-                public void onError(int i, String s) {
-                    videoReady.error();
-                }
-
-                @Override
-                public void onSuccess() {
-                    videoElem.setVideoPath(videoPath);
-                    videoReady.ready(videoPath);
-                }
-            });
-        }
+        return new ImVideo(videoElem, new ImImage(videoElem.getSnapshotPath(), snapshot.getWidth(), snapshot.getHeight()));
     }
 
 

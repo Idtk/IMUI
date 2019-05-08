@@ -1,16 +1,16 @@
 package com.gengqiquan.imui.model;
 
 public class ImVideo {
-    private String path;
+    private Object video;
     private ImImage image;
 
-    public ImVideo(String path, ImImage image) {
-        this.path = path;
+    public ImVideo(Object video, ImImage image) {
+        this.video = video;
         this.image = image;
     }
 
-    public String getPath() {
-        return path;
+    public Object getVideo() {
+        return video;
     }
 
     public ImImage getImage() {
