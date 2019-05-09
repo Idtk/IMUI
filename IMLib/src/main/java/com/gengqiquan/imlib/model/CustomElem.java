@@ -1,6 +1,6 @@
 package com.gengqiquan.imlib.model;
 
-import com.gengqiquan.imlib.JsonUtil;
+import com.gengqiquan.imlib.uitls.JsonUtil;
 
 public class CustomElem {
 

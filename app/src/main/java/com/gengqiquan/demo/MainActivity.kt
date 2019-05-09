@@ -12,7 +12,7 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.tencent.imsdk.*
 import kotlinx.android.synthetic.main.activity_main.*
 import android.util.Log
-import com.gengqiquan.imlib.JsonUtil
+import com.gengqiquan.imlib.uitls.JsonUtil
 import com.tencent.imsdk.TIMCallBack
 import com.tencent.imsdk.TIMManager
 import com.gengqiquan.imui.help.IMHelp
@@ -264,7 +264,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(captureIntent)
                     return
                 }
-                if (type == ButtonFactory.CAR) {
+                if (type == ButtonFactory.CAR || type == ButtonFactory.CARD) {
                     val ele = CustomElem.create(json)
                     Log.d(tag, ele.toString())
                     Log.d(tag, JsonUtil.toJson(ele))
