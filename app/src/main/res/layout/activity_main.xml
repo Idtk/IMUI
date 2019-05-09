@@ -8,11 +8,6 @@
         android:layout_height="match_parent">
     <com.gengqiquan.imui.ui.IMUI android:layout_width="match_parent"
                                  android:id="@+id/im_ui"
-                                 android:layout_weight="1"
-                                 android:layout_height="0dp"/>
+                                 android:layout_height="match_parent"/>
 
-    <com.gengqiquan.imui.input.ImInputUI android:layout_width="match_parent"
-                                         android:layout_gravity="bottom"
-                                         android:id="@+id/im_input"
-                                         android:layout_height="wrap_content"></com.gengqiquan.imui.input.ImInputUI>
 </LinearLayout>

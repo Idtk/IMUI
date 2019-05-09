@@ -45,8 +45,6 @@ class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, par
                     singleLine = true
                     layoutParams = FrameLayout.LayoutParams(wrapContent, wrapContent).apply {
                         gravity = Gravity.RIGHT xor Gravity.CENTER_VERTICAL
-                        leftMargin = dip(30)
-                        rightMargin = dip(30)
                     }
                 }
 
@@ -77,6 +75,8 @@ class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, par
         }
         tv_time?.layoutParams = (tv_time?.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = (if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT) xor Gravity.CENTER_VERTICAL
+            leftMargin = if (item.isSelf()) 0 else dip(30)
+            rightMargin = if (!item.isSelf()) 0 else dip(30)
         }
         iv_play?.layoutParams = (iv_play?.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = (if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT) xor Gravity.CENTER_VERTICAL

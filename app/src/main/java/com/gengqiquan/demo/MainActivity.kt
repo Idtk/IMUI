@@ -235,7 +235,7 @@ class MainActivity : AppCompatActivity() {
                 })
             }
         })
-        im_input.sendAction { type, msg ->
+        im_ui.inputUI.sendAction { type, msg ->
             con.sendMessage(msg as TIMMessage, object : TIMValueCallBack<TIMMessage> {
                 override fun onSuccess(msg: TIMMessage) {
                     Log.e(tag, "onSuccess" + msg.toString())
@@ -251,7 +251,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
-        im_input.otherProxy(object : OtherProxy {
+        im_ui.inputUI.otherProxy(object : OtherProxy {
             override fun proxy(type: Int, send: (Any) -> Unit) {
                 if (type == ButtonFactory.PICTURE) {
                     QQResult.startActivityWith(

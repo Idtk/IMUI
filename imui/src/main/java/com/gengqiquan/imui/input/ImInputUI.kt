@@ -13,12 +13,14 @@ import com.gengqiquan.imui.help.IMHelp
 import com.gengqiquan.imui.interfaces.OtherProxy
 import com.gengqiquan.imui.model.ButtonInfo
 import com.gengqiquan.imui.ui.DefaultIMViewFactory
+import com.gengqiquan.imui.ui.gone
 import com.gengqiquan.imui.ui.isShow
 import com.gengqiquan.imui.ui.singleClick
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onFocusChange
 
-class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
+class ImInputUI(context: Context) : LinearLayout(context) {
 
     private val uiAdapter by lazy {
         object : BaseAdapter() {
@@ -53,25 +55,11 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
     }
 
     private var data: MutableList<ButtonInfo> = arrayListOf()
-    //    fun appendMaddsgs(oldData: MutableList<IimMsg>) {
-//        data.addAll(0, oldData)
-//        uiAdapter.notifyItemRangeInserted(0, oldData.size)
-//    }
-//
-//    fun newMsgs(oldData: MutableList<IimMsg>) {
-//        val start = data.size
-//        data.addAll(oldData)
-//        uiAdapter.notifyItemRangeInserted(start, oldData.size)
-//    }
-//
-//    fun newMsg(msg: IimMsg) {
-//        data.add(msg)
-//        uiAdapter.notifyItemInserted(data.size)
-//    }
     private var tv_send: TextView? = null
     private var tv_audio: TextView? = null
     private var et_text: EditText? = null
     private var iv_other: ImageView? = null
+    private var iv_audio: ImageView? = null
     private var gv_button: View? = null
     private var inAudio = false
 
@@ -87,12 +75,9 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
                 //                topMargin = dip(10)
 //                bottomMargin = dip(10)
             }
-            imageView {
+            iv_audio = imageView {
                 onClick {
-                    inAudio = !inAudio
-                    tv_audio?.isShow(inAudio)
-                    et_text?.isShow(!inAudio)
-                    background = resources.getDrawable(if (inAudio) R.drawable.im_keyboard else R.drawable.im_voice)
+                    audioState()
                 }
                 background = resources.getDrawable(R.drawable.im_voice)
             }.lparams(dip(26), dip(26)) {
@@ -116,6 +101,13 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
                     iv_other?.isShow(text.isNullOrBlank())
                     tv_send?.isShow(!text.isNullOrBlank())
                 }
+                onClick {
+
+                }
+                onFocusChange { v, hasFocus ->
+                    if (hasFocus)
+                        gv_button?.gone()
+                }
             }.lparams(0, wrapContent) {
                 topMargin = dip(8)
                 bottomMargin = dip(8)
@@ -132,11 +124,16 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
             }
             iv_other = imageView {
                 onClick {
+                    if (inAudio) {
+                        audioState()
+                    }
                     gv_button?.isShow(gv_button!!.visibility == View.GONE)
-                    if (gv_button!!.visibility != View.GONE) {
-                        closeKeybord(et_text!!)
-                    } else {
+
+                    if (et_text!!.isFocused && gv_button!!.visibility == View.GONE) {
                         openKeybord(et_text!!)
+                    } else {
+                        closeKeybord(et_text!!)
+                        et_text?.clearFocus()
                     }
                 }
                 background = resources.getDrawable(R.drawable.im_other)
@@ -209,6 +206,26 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
         )
     }
 
+    fun audioState() {
+        closeKeybord(et_text!!)
+        if (et_text!!.isFocused && gv_button!!.visibility == View.GONE) {
+            openKeybord(et_text!!)
+        } else {
+
+            et_text?.clearFocus()
+        }
+
+        inAudio = !inAudio
+        tv_audio?.isShow(inAudio)
+        et_text?.isShow(!inAudio)
+        iv_audio?.background = resources.getDrawable(if (inAudio) R.drawable.im_keyboard else R.drawable.im_voice)
+        if (inAudio) {
+            closeKeybord(et_text!!)
+            gv_button?.gone()
+        } else if (et_text!!.isFocused) {
+            openKeybord(et_text!!)
+        }
+    }
 
     private fun audioView(parent: LinearLayout) {
         parent.apply {
@@ -227,24 +244,6 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
 
 
     private var send: (Int, Any) -> Unit = { type, msg -> }
-    //
-//    fun addIMViewFactory(imViewFactory: IimViewFactory) {
-//        imViewFactors.add(0, imViewFactory)
-//
-//    }
-//
-//    private var imViewFactors = mutableListOf<IimViewFactory>(DefaultIMViewFactory(context))
-//
-//    companion object {
-//        private var displayer: ImImageDisplayer? = null
-//        fun setDisplayer(displayer: ImImageDisplayer) {
-//            this.displayer = displayer
-//        }
-//
-//        fun display(url: String, imageView: ImageView, after: (width: Int, height: Int) -> Unit) {
-//            displayer?.display(url, imageView, after)
-//        }
-//    }
     private fun openKeybord(mEditText: EditText) {
         val imm = context
             .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -255,10 +254,12 @@ class ImInputUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, 
         )
     }
 
-    /**
-     * 关闭软键盘
-     *
-     */
+    private fun isActive(mEditText: EditText): Boolean {
+        val imm = context
+            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        return imm.isActive
+    }
+
     private fun closeKeybord(mEditText: EditText) {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(mEditText.windowToken, InputMethodManager.RESULT_UNCHANGED_SHOWN)

@@ -2,22 +2,27 @@ package com.gengqiquan.imui.ui
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING
+import com.gengqiquan.imui.input.ImInputUI
 import com.gengqiquan.imui.interfaces.IMoreOldMsgListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import com.gengqiquan.imui.interfaces.IimViewFactory
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk27.coroutines.onFocusChange
 
-class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
+class IMUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     private val uiAdapter by lazy {
         object : RecyclerView.Adapter<ImHolder>() {
             override fun getItemViewType(position: Int): Int {
@@ -78,15 +83,22 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
     }
 
     private fun scrollToNeed(position: Int) {
-        listUI.scrollToPosition(position)
+        linearLayoutManager.scrollToPosition(position + allInit)
+
     }
 
     val listUI: RecyclerView
+    val inputUI: ImInputUI
+    private val linearLayoutManager = LinearLayoutManager(context)
 
     init {
+        orientation = VERTICAL
         listUI = recyclerView {
+            layoutParams = LayoutParams(matchParent, 0).apply {
+                weight = 1f
+            }
             overScrollMode = View.OVER_SCROLL_NEVER
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManager
             adapter = uiAdapter
             bottomPadding = dip(15)
             onFocusChange { v, hasFocus ->
@@ -97,15 +109,28 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
             setOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     if (!mIsLoadMore && allInit == 1 && (newState == SCROLL_STATE_IDLE || newState == SCROLL_STATE_SETTLING)) {
-                        if (isLastItemVisible(recyclerView)) {
+                        if (!recyclerView.canScrollVertically(-1)) {
                             mIsLoadMore = true
                             moreOldMsgListener?.more()
                         }
                     }
                 }
             })
-
         }
+        inputUI = ImInputUI(context)
+        addView(inputUI)
+        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            var lastHeight = 0
+            override fun onGlobalLayout() {
+                var height = listUI.height
+
+                if (Math.abs(lastHeight - height) > dip(50)) {
+                    scrollToNeed(data.size - 1)
+                }
+                lastHeight = height
+
+            }
+        })
     }
 
     var mIsLoadMore = false
@@ -121,25 +146,4 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
         uiAdapter.notifyDataSetChanged()
     }
 
-    private fun isLastItemVisible(recyclerView: RecyclerView): Boolean {
-        val adapter = recyclerView.getAdapter()
-
-        if (null == adapter || adapter!!.getItemCount() == 0) {
-            return true
-        }
-
-        val lastVisiblePosition =
-            (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition();
-
-        if (lastVisiblePosition == 0) {
-            val lastVisibleChild = recyclerView.getChildAt(0)
-            if (lastVisibleChild != null) {
-                return lastVisibleChild.getTop() <= recyclerView.getTop()
-            }
-        }
-        return false
-    }
-
-
-    private var imViewFactors = mutableListOf<IimViewFactory>(DefaultIMViewFactory(context))
 }

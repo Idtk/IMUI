@@ -35,7 +35,7 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
                 IMLoadMoreView(context, parent)
             }
             else -> {
-                ImUnknowView(context, parent)
+                ImUnKnowView(context, parent)
             }
         }
     }

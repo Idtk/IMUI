@@ -7,23 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.gengqiquan.imui.R
 import com.gengqiquan.imui.interfaces.IimMsg
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.textColor
-import org.jetbrains.anko.wrapContent
+import org.jetbrains.anko.*
 
-class ImUnknowView(val context: Context, parent: ViewGroup) : ImView(parent) {
+class ImUnKnowView(val context: Context, parent: ViewGroup) : ImView(parent) {
     override fun get(): View {
 
         return TextView(context).apply {
             textColor = Color.BLACK
-            textSize = 18f
+            textSize = 14f
+            backgroundResource = R.drawable.im_edit_back
             gravity = Gravity.CENTER
             includeFontPadding = false
             text = "当前版本暂不支持此消息"
+            horizontalPadding = dip(20)
             layoutParams = FrameLayout.LayoutParams(wrapContent, dip(40)).apply {
-                leftMargin = dip(63)
-                rightMargin = dip(63)
+                gravity = Gravity.CENTER
             }
         }
     }
