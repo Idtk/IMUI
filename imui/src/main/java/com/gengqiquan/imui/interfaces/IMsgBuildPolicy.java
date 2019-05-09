@@ -9,5 +9,7 @@ public interface IMsgBuildPolicy {
 
     Object buildImgMessage(List<String> paths);
 
+    Object buildCustomMessage(String json);
+
     Object buildVideoMessage(String imgPath, String videoPath, int imgWidth, int imgHeight, long duration);
 }

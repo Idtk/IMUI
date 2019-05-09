@@ -16,6 +16,9 @@ class TIMViewFactory(val context: Context) : IimViewFactory {
             DefaultIMViewFactory.VIDEO -> {
                 IMVideoView(context, parent)
             }
+            DefaultIMViewFactory.SHARE -> {
+                ImShareView(context, parent)
+            }
             else -> null
         }
     }

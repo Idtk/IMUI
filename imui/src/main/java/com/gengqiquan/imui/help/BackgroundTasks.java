@@ -9,11 +9,12 @@
 package com.gengqiquan.imui.help;
 
 import android.os.Handler;
+import android.os.Looper;
 
 
 public class BackgroundTasks {
 
-    private Handler mHandler = new Handler();
+    private volatile Handler mHandler = new Handler(Looper.getMainLooper());
 
 
     public void runOnUiThread(Runnable runnable) {
@@ -31,14 +32,13 @@ public class BackgroundTasks {
     private static BackgroundTasks instance;
 
     public static BackgroundTasks getInstance() {
+        if (instance == null) {
+            synchronized (BackgroundTasks.class) {
+                if (instance == null) {
+                    instance = new BackgroundTasks();
+                }
+            }
+        }
         return instance;
     }
-
-
-    // 需要在主线程中初始化
-    public static void initInstance() {
-        instance = new BackgroundTasks();
-    }
-
-
 }

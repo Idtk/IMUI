@@ -3,7 +3,7 @@ package com.gengqiquan.imui.help;
 import android.widget.Toast;
 
 /**
- * UI通用方法类
+ * toas辅助类
  */
 public class ToastHelp {
 

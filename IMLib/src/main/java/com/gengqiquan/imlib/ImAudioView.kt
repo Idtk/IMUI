@@ -69,7 +69,7 @@ class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, par
 
 
         m = dip(50)
-        var length = getLength(0, item.duration())
+        var length = getLength(dip(20), item.duration())
         fl_content?.layoutParams= (fl_content?.layoutParams as LinearLayout.LayoutParams).apply {
             width = length
         }

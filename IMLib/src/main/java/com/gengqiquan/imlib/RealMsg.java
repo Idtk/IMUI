@@ -3,6 +3,7 @@ package com.gengqiquan.imlib;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import androidx.annotation.MainThread;
+import com.gengqiquan.imlib.model.CustomElem;
 import com.gengqiquan.imlib.video.util.FileUtil;
 import com.gengqiquan.imui.help.IMHelp;
 import com.gengqiquan.imui.interfaces.IimMsg;
@@ -180,6 +181,15 @@ public class RealMsg implements IimMsg {
                 return 3;
             case Sound:
                 return 4;
+            case Custom:
+                TIMCustomElem customElem = (TIMCustomElem) elem;
+                customData = CustomElem.create(new String(customElem.getData()));
+                switch (customData.getType()) {
+                    case share:
+                        return 5;
+                    default:
+                        return 0;
+                }
             default:
                 return 0;
         }
@@ -201,5 +211,13 @@ public class RealMsg implements IimMsg {
     @Override
     public String sender() {
         return timMsg.getSender();
+    }
+
+    CustomElem customData;
+
+    @NotNull
+    @Override
+    public Object extra() {
+        return customData;
     }
 }

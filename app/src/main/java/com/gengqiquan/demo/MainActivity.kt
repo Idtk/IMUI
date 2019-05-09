@@ -12,6 +12,7 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.tencent.imsdk.*
 import kotlinx.android.synthetic.main.activity_main.*
 import android.util.Log
+import com.gengqiquan.imlib.JsonUtil
 import com.tencent.imsdk.TIMCallBack
 import com.tencent.imsdk.TIMManager
 import com.gengqiquan.imui.help.IMHelp
@@ -20,13 +21,13 @@ import com.gengqiquan.imui.input.ButtonFactory
 import com.gengqiquan.imlib.RealMsg
 import com.gengqiquan.imlib.TIMViewFactory
 import com.gengqiquan.imlib.audio.TIMAudioRecorder
-import com.gengqiquan.imlib.audio.TIMMsgBuilder
+import com.gengqiquan.imlib.TIMMsgBuilder
+import com.gengqiquan.imlib.model.CustomElem
 import com.gengqiquan.imlib.video.CameraActivity
 import com.gengqiquan.imlib.video.listener.MediaCallBack
 import com.gengqiquan.imui.help.ToastHelp
 import com.gengqiquan.imui.interfaces.*
 import com.gengqiquan.imui.model.MenuAction
-import com.gengqiquan.imui.ui.IMUI
 import com.gengqiquan.qqresult.QQResult
 import com.tencent.imsdk.TIMMessage
 import com.tencent.imsdk.ext.message.TIMConversationExt
@@ -263,6 +264,16 @@ class MainActivity : AppCompatActivity() {
                     startActivity(captureIntent)
                     return
                 }
+                if (type == ButtonFactory.CAR) {
+                    val ele = CustomElem.create(json)
+                    Log.d(tag, ele.toString())
+                    Log.d(tag, JsonUtil.toJson(ele))
+                    val msg =
+                        IMHelp.getMsgBuildPolicy()
+                            .buildCustomMessage(JsonUtil.toJson(ele))
+                    send(msg)
+                    return
+                }
 
             }
 
@@ -292,8 +303,33 @@ class MainActivity : AppCompatActivity() {
             Log.e(tag, "删除成功")
         })
         LongPressHelp.init(list)
+
     }
 
+    val json = "{\n" +
+            "    \"data\": {\n" +
+            "        \"action_type\": 1,\n" +
+            "        \"msg\": {\n" +
+            "            \"content\": \"公司：南京市大锤二手车经营管理中心\",\n" +
+            "            \"module\": \"模块来源\",\n" +
+            "            \"pic_url\": \"https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1336029781,3333225635&fm=26&gp=0.jpg\",\n" +
+            "            \"title\": \"2013款 朗逸 改款 1.4TFSI 手动豪华版 5周年纪念款\"\n" +
+            "        },\n" +
+            "        \"router_url\": \"che300://open/webv/http://m.che300.com\",\n" +
+            "        \"style\": 0\n" +
+            "    },\n" +
+            "    \"platform\": {\n" +
+            "        \"device_info\": \"(OPPO A83,Android 7.1.1)\",\n" +
+            "        \"from\": \"che300_pro\",\n" +
+            "        \"from_user_id\": \"fjjkwerwiuafsjfkjf\",\n" +
+            "        \"lat\": \"\",\n" +
+            "        \"lng\": \"\",\n" +
+            "        \"os\": \"ios\",\n" +
+            "        \"receive_user_id\": \"wtwouafjklfaksjf\",\n" +
+            "        \"version\": \"2.2.4.0\"\n" +
+            "    },\n" +
+            "    \"type\": \"share\"\n" +
+            "}"
     var lastMsg: TIMMessage? = null
     val tag = "immmmmm"
     val tel = "129a14e8a4b3a123"

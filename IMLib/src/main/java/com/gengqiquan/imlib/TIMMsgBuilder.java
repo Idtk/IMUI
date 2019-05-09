@@ -1,50 +1,57 @@
-package com.gengqiquan.imlib.audio;
+package com.gengqiquan.imlib;
 
-import android.net.Uri;
 import com.gengqiquan.imui.interfaces.IMsgBuildPolicy;
 import com.tencent.imsdk.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.List;
 
 public class TIMMsgBuilder implements IMsgBuildPolicy {
     @NotNull
     @Override
     public TIMMessage buildTextMessage(@NotNull String message) {
-        TIMMessage TIMMsg = new TIMMessage();
+        TIMMessage TimMsg = new TIMMessage();
         TIMTextElem ele = new TIMTextElem();
         ele.setText(message);
-        TIMMsg.addElement(ele);
-        return TIMMsg;
+        TimMsg.addElement(ele);
+        return TimMsg;
     }
 
     @NotNull
     @Override
     public TIMMessage buildAudioMessage(@NotNull String recordPath, int duration) {
-        TIMMessage TIMMsg = new TIMMessage();
+        TIMMessage TimMsg = new TIMMessage();
         TIMSoundElem ele = new TIMSoundElem();
         ele.setDuration(duration / 1000);
         ele.setPath(recordPath);
-        TIMMsg.addElement(ele);
-        return TIMMsg;
+        TimMsg.addElement(ele);
+        return TimMsg;
     }
 
     @NotNull
     @Override
     public TIMMessage buildImgMessage(@NotNull List<String> paths) {
-        TIMMessage TIMMsg = new TIMMessage();
+        TIMMessage TimMsg = new TIMMessage();
         for (String path : paths) {
             TIMImageElem elem = new TIMImageElem();
             elem.setPath(path);
-            TIMMsg.addElement(elem);
+            TimMsg.addElement(elem);
         }
-        return TIMMsg;
+        return TimMsg;
+    }
+
+    @Override
+    public Object buildCustomMessage(String json) {
+        TIMMessage TimMsg = new TIMMessage();
+        TIMCustomElem ele = new TIMCustomElem();
+        ele.setData(json.getBytes());
+        TimMsg.addElement(ele);
+        return TimMsg;
     }
 
     @Override
     public TIMMessage buildVideoMessage(String imgPath, String videoPath, int width, int height, long duration) {
-        TIMMessage TIMMsg = new TIMMessage();
+        TIMMessage TimMsg = new TIMMessage();
         TIMVideoElem ele = new TIMVideoElem();
 
         TIMVideo video = new TIMVideo();
@@ -59,9 +66,9 @@ public class TIMMsgBuilder implements IMsgBuildPolicy {
         ele.setSnapshotPath(imgPath);
         ele.setVideoPath(videoPath);
 
-        TIMMsg.addElement(ele);
+        TimMsg.addElement(ele);
 
-        return TIMMsg;
+        return TimMsg;
     }
 
 

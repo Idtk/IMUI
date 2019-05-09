@@ -13,6 +13,7 @@ open interface IimMsg {
     fun img(): ImImage
     fun isSelf(): Boolean
     fun duration(): Long
+    fun extra(): Any
     fun <T> realData(): T
 
 }

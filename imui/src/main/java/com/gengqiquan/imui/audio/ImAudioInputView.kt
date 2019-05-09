@@ -40,19 +40,19 @@ class ImAudioInputView(context: Context, val send: (Any) -> Unit) : TextView(con
 //                    inputHandler?.startRecording()
                     start = System.currentTimeMillis()
                     IMHelp.getAudioRecorder().startRecord {
-//                        if (inputHandler != null) {
+                        //                        if (inputHandler != null) {
 //                            if (audioCancel) {
 //                                inputHandler?.stopRecording()
 //                                return@startRecord
 //                            }
-                            if (it < 500) {
-                                ToastHelp.toastShortMessage("说话时间太短")
-                                return@startRecord
-                            }
-                            stopRecord()
+                        if (it < 500) {
+                            ToastHelp.toastShortMessage("说话时间太短")
+                            return@startRecord
+                        }
+                        stopRecord()
 //                            inputHandler?.stopRecording()
 //                        }
-                       if (!audioCancel) {
+                        if (!audioCancel) {
                             send.invoke(
                                 IMHelp.getMsgBuildPolicy().buildAudioMessage(
                                     IMHelp.getAudioRecorder().recordAudioPath,
@@ -61,21 +61,25 @@ class ImAudioInputView(context: Context, val send: (Any) -> Unit) : TextView(con
                             )
                         }
                     }
-
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    return true
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
                     if (motionEvent.getY() - startRecordY < -100) {
-                        audioCancel = true
+                        if (!audioCancel) {
+                            moveOut()
+                            audioCancel = true
+                        }
 
-//                        stopRecord()
-                        moveOut()
                     } else {
-                        audioCancel = false
-//                        inputHandler?.startRecording()
-//                        startRecord()
-                        moveIn()
-                    }
+                        if (audioCancel) {
+                            moveIn()
+                            audioCancel = false
+                        }
 
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    }
+                    return true
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
 
                     audioCancel = motionEvent.getY() - startRecordY < -100
                     stopRecord()
@@ -120,6 +124,7 @@ class ImAudioInputView(context: Context, val send: (Any) -> Unit) : TextView(con
                 orientation = LinearLayout.VERTICAL
                 iv_animate = imageView {
                     layoutParams = LinearLayout.LayoutParams(dip(90), dip(90))
+                    setImageResource(R.drawable.im_recording_volume)
                 }
                 tv_tips = textView {
                     gravity = Gravity.CENTER
@@ -137,8 +142,8 @@ class ImAudioInputView(context: Context, val send: (Any) -> Unit) : TextView(con
         }
         popup?.showAtLocation(rootView, Gravity.CENTER, 0, 0)
         iv_animate?.setImageResource(R.drawable.im_recording_volume)
+        animationDrawable = iv_animate?.drawable as AnimationDrawable
         iv_animate?.post {
-            animationDrawable = iv_animate?.drawable as AnimationDrawable?
             animationDrawable?.start()
         }
 
@@ -149,14 +154,16 @@ class ImAudioInputView(context: Context, val send: (Any) -> Unit) : TextView(con
     fun moveOut() {
         tv_tips?.text = "松开手指，取消发送"
         animationDrawable?.stop()
-        iv_animate?.imageResource = R.drawable.im_picture
+        iv_animate?.imageResource = R.drawable.im_close
     }
 
     fun moveIn() {
         tv_tips?.text = "手指上滑，取消发送"
         iv_animate?.setImageResource(R.drawable.im_recording_volume)
         animationDrawable = iv_animate?.drawable as AnimationDrawable?
-        animationDrawable?.start()
+        iv_animate?.post {
+            animationDrawable?.start()
+        }
     }
 
 

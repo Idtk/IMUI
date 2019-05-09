@@ -39,7 +39,7 @@ dependencies {
     implementation "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
     implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
-
+    implementation 'com.google.code.gson:gson:2.8.2'
     api 'com.tencent.imsdk:imsdk:4.3.81'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.gengqiquan:photoalbum:1.1.7'
