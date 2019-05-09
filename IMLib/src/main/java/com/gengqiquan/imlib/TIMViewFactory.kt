@@ -1,6 +1,7 @@
 package com.gengqiquan.imlib
 
 import android.content.Context
+import android.util.Log
 import android.view.ViewGroup
 import com.gengqiquan.imui.interfaces.IimViewFactory
 import com.gengqiquan.imui.ui.*
@@ -14,7 +15,7 @@ class TIMViewFactory(val context: Context) : IimViewFactory {
      */
     override fun create(parent: ViewGroup, viewType: Int): ImView? {
         if (viewType > 999) {
-            when (viewType / 1000) {
+            return when (viewType / 1000) {
                 1 -> {
                     ImPreSendView(context, parent)
                 }

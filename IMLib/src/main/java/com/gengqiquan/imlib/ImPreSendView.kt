@@ -22,6 +22,7 @@ import com.gengqiquan.imui.ui.ImView
 import com.gengqiquan.imui.ui.RealImView
 import com.gengqiquan.imui.ui.isShow
 import com.gengqiquan.imui.ui.singleClick
+import com.tencent.imsdk.ext.message.TIMMessageExt
 import org.jetbrains.anko.*
 
 class ImPreSendView(val context: Context, parent: ViewGroup) : ImView(parent) {
@@ -31,8 +32,8 @@ class ImPreSendView(val context: Context, parent: ViewGroup) : ImView(parent) {
             backgroundResource = R.drawable.im_share_msg_back
             padding = dip(13)
             layoutParams = FrameLayout.LayoutParams(matchParent, wrapContent).apply {
-                leftMargin = dip(15)
-                rightMargin = dip(15)
+                verticalMargin = dip(20)
+                horizontalMargin = dip(15)
             }
             iv_img = imageView {
                 layoutParams = LinearLayout.LayoutParams(dip(80), dip(80))
@@ -67,7 +68,7 @@ class ImPreSendView(val context: Context, parent: ViewGroup) : ImView(parent) {
                     textSize = 12f
                     gravity = Gravity.CENTER
                     includeFontPadding = false
-                    layoutParams = LinearLayout.LayoutParams(dip(67), dip(20)).apply {
+                    layoutParams = LinearLayout.LayoutParams(dip(67), dip(25)).apply {
                         topMargin = dip(10)
                         gravity = Gravity.BOTTOM xor Gravity.RIGHT
                     }
@@ -86,9 +87,10 @@ class ImPreSendView(val context: Context, parent: ViewGroup) : ImView(parent) {
                 tv_desc?.text = data.msg.content
                 IMHelp.getImageDisplayer().display(data.msg.pic_url, iv_img!!)
                 tv_send?.singleClick {
+                    TIMMessageExt(item.realData()).customInt = 0
                     IMHelp.getMsgSender(context)?.send(ButtonFactory.CAR, item.realData(), object : ISenderListener {
                         override fun statusChange(type: Int) {
-                            
+
                         }
                     })
                 }

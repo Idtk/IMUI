@@ -2,6 +2,7 @@ package com.gengqiquan.imlib;
 
 import com.gengqiquan.imui.interfaces.IMsgBuildPolicy;
 import com.tencent.imsdk.*;
+import com.tencent.imsdk.ext.message.TIMMessageExt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,11 +42,20 @@ public class TIMMsgBuilder implements IMsgBuildPolicy {
     }
 
     @Override
-    public Object buildCustomMessage(String json) {
+    public TIMMessage buildCustomMessage(String json) {
         TIMMessage TimMsg = new TIMMessage();
         TIMCustomElem ele = new TIMCustomElem();
         ele.setData(json.getBytes());
         TimMsg.addElement(ele);
+        return TimMsg;
+    }
+
+    public static TIMMessage buildPreCustomMessage(String json) {
+        TIMMessage TimMsg = new TIMMessage();
+        TIMCustomElem ele = new TIMCustomElem();
+        ele.setData(json.getBytes());
+        TimMsg.addElement(ele);
+        new TIMMessageExt(TimMsg).setCustomInt(-1);
         return TimMsg;
     }
 

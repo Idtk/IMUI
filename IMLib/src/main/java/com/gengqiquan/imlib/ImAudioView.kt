@@ -19,38 +19,39 @@ import com.gengqiquan.imui.ui.singleClick
 import org.jetbrains.anko.*
 
 class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, parent) {
-    var fl_content: FrameLayout? = null
+    var fl_voice: FrameLayout? = null
     var tv_time: TextView? = null
-    var tv_time_self: TextView? = null
+    //    var tv_time_self: TextView? = null
     var iv_play: ImageView? = null
+    var ll_content: LinearLayout? = null
 
-    override fun floatBaseView() = fl_content!!
+    override fun floatBaseView() = fl_voice!!
     override fun createItemView(contentView: FrameLayout): View {
         return contentView.apply {
-            linearLayout {
-                gravity = Gravity.RIGHT
-                layoutParams = FrameLayout.LayoutParams(matchParent, wrapContent).apply {
+            fl_voice = frameLayout {
+                layoutParams = FrameLayout.LayoutParams(wrapContent, wrapContent).apply {
                     leftMargin = dip(63)
                     rightMargin = dip(63)
                 }
-                tv_time_self = textView {
-                    textColor = Color.BLACK
-                    textSize = 18f
-                    includeFontPadding = false
-                }
-                fl_content = frameLayout {
-                    iv_play = imageView {
-                        layoutParams = FrameLayout.LayoutParams(dip(20), dip(20)).apply {
-                            gravity = Gravity.RIGHT
-                        }
+                iv_play = imageView {
+                    layoutParams = FrameLayout.LayoutParams(dip(20), dip(20)).apply {
+                        gravity = Gravity.RIGHT xor Gravity.CENTER_VERTICAL
                     }
                 }
                 tv_time = textView {
                     textColor = Color.BLACK
-                    textSize = 18f
+                    textSize = 15f
                     includeFontPadding = false
+                    singleLine = true
+                    layoutParams = FrameLayout.LayoutParams(wrapContent, wrapContent).apply {
+                        gravity = Gravity.RIGHT xor Gravity.CENTER_VERTICAL
+                        leftMargin = dip(30)
+                        rightMargin = dip(30)
+                    }
                 }
+
             }
+
         }
     }
 
@@ -70,49 +71,23 @@ class ImAudioView(context: Context, parent: ViewGroup) : RealImView(context, par
 
         m = dip(50)
         var length = getLength(dip(20), item.duration())
-        fl_content?.layoutParams= (fl_content?.layoutParams as LinearLayout.LayoutParams).apply {
+        fl_voice?.layoutParams = (fl_voice?.layoutParams as FrameLayout.LayoutParams).apply {
             width = length
+            gravity = if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT
         }
-        tv_time_self?.isShow(item.isSelf())
-        tv_time?.isShow(!item.isSelf())
+        tv_time?.layoutParams = (tv_time?.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = (if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT) xor Gravity.CENTER_VERTICAL
+        }
+        iv_play?.layoutParams = (iv_play?.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = (if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT) xor Gravity.CENTER_VERTICAL
+        }
+        fl_voice?.background =
+            context.resources.getDrawable(if (item.isSelf()) R.drawable.im_text_self else R.drawable.im_text)
+        tv_time?.text = item.duration().toString() + "\""
         iv_play?.setImageResource(R.drawable.im_voice_msg_playing_3)
-        if (item.isSelf()) {
-            tv_time_self?.text = item.duration().toString() + "\""
-            tv_time_self?.apply {
-                layoutParams = LinearLayout.LayoutParams(wrapContent, wrapContent)
-            }
-            tv_time?.text = ""
-            tv_time?.apply {
-                layoutParams = LinearLayout.LayoutParams(0, wrapContent).apply {
-                    weight = 1f
-                }
-            }
-            fl_content?.background = context.resources.getDrawable(R.drawable.im_text_self)
 
-            iv_play?.apply {
-                layoutParams = FrameLayout.LayoutParams(dip(20), dip(20)).apply {
-                    gravity = Gravity.RIGHT
-                }
-            }
-        } else {
-            tv_time_self?.text = ""
-            tv_time_self?.apply {
-                layoutParams = LinearLayout.LayoutParams(0, wrapContent).apply {
-                    weight = 1f
-                }
-            }
-            tv_time?.text = item.duration().toString() + "\""
-            tv_time?.apply {
-                layoutParams = LinearLayout.LayoutParams(wrapContent, wrapContent)
-            }
-            fl_content?.background = context.resources.getDrawable(R.drawable.im_text)
-            iv_play?.apply {
-                layoutParams = FrameLayout.LayoutParams(dip(20), dip(20)).apply {
-                    gravity = Gravity.LEFT
-                }
-            }
-        }
-        fl_content?.singleClick {
+
+        fl_voice?.singleClick {
             if (UIKitAudioArmMachine.getInstance().isPlayingRecord) {
                 UIKitAudioArmMachine.getInstance().stopPlayRecord()
                 return@singleClick

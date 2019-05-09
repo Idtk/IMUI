@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
         TIMManager.getInstance().userConfig = TIMUserConfigMsgExt(userConfig)
             .setMessageReceiptListener {
-                // TODO: 2019-05-07 监听撤回消息 
+                im_ui.refresh()
             }
         TIMManager.getInstance().addMessageListener(object : TIMMessageListener {
             override fun onNewMessages(msgs: MutableList<TIMMessage>): Boolean {
@@ -285,7 +285,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(captureIntent)
                     return
                 }
-                if (type == ButtonFactory.CAR || type == ButtonFactory.CARD) {
+                if (type == ButtonFactory.CAR) {
                     val ele = CustomElem.create(json)
                     Log.d(tag, ele.toString())
                     Log.d(tag, JsonUtil.toJson(ele))
@@ -293,6 +293,13 @@ class MainActivity : AppCompatActivity() {
                         IMHelp.getMsgBuildPolicy()
                             .buildCustomMessage(JsonUtil.toJson(ele))
                     send(msg)
+                    return
+                }
+                if (type == ButtonFactory.CARD) {
+                    val ele = CustomElem.create(json)
+                    Log.d(tag, ele.toString())
+                    Log.d(tag, JsonUtil.toJson(ele))
+                    im_ui.newMsgs(RealMsg.create(TIMMsgBuilder.buildPreCustomMessage(JsonUtil.toJson(ele))))
                     return
                 }
 
