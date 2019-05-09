@@ -214,6 +214,24 @@ class MainActivity : AppCompatActivity() {
                 loadMore()
             }
         })
+        IMHelp.registerMsgSender(this, object : IMsgSender {
+            override fun send(type: Int, msg: Any) {
+                con.sendMessage(msg as TIMMessage, object : TIMValueCallBack<TIMMessage> {
+                    override fun onSuccess(msg: TIMMessage) {
+                        Log.e(tag, "onSuccess" + msg.toString())
+                        val list = mutableListOf<IimMsg>()
+                        list.addAll(RealMsg.create(msg))
+
+//                    list.reverse()
+                        im_ui.newMsgs(list)
+                    }
+
+                    override fun onError(p0: Int, p1: String?) {
+                        Log.e(tag, "onError" + p0.toString() + ":" + p1)
+                    }
+                })
+            }
+        })
         im_input.sendAction { type, msg ->
             con.sendMessage(msg as TIMMessage, object : TIMValueCallBack<TIMMessage> {
                 override fun onSuccess(msg: TIMMessage) {
@@ -279,7 +297,7 @@ class MainActivity : AppCompatActivity() {
 
         })
         var list = mutableListOf<MenuAction>()
-        list.add(MenuAction("撤回") {
+        list.add(MenuAction("撤回", {
             Log.e(tag, "调用撤回")
             conversationExt.revokeMessage(it as TIMMessage, object : TIMCallBack {
                 override fun onSuccess() {
@@ -292,7 +310,7 @@ class MainActivity : AppCompatActivity() {
                     Log.e(tag, "撤回失败" + p0.toString() + ":" + p1)
                 }
             })
-        })
+        }, true))
         list.add(MenuAction("删除") {
             if (!TIMMessageExt(it as TIMMessage).remove()) {
                 Log.e(tag, "删除失败")

@@ -23,6 +23,7 @@ object LongPressHelp {
         val popup =
             PopupWindow(WindowManager.LayoutParams.WRAP_CONTENT, height)
         val content = LinearLayout(context).apply {
+            gravity = Gravity.CENTER
             //            layoutParams = LinearLayout.LayoutParams(wrapContent, height)
             background = resources.getDrawable(R.drawable.im_pop_back)
             list.mapIndexed { index, menuAction ->

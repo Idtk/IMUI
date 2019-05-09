@@ -13,6 +13,7 @@ import com.gengqiquan.imui.model.ImVideo;
 import com.gengqiquan.imui.ui.DefaultIMViewFactory;
 import com.tencent.imsdk.*;
 import com.tencent.imsdk.conversation.ProgressInfo;
+import com.tencent.imsdk.ext.message.TIMMessageExt;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
@@ -170,8 +171,30 @@ public class RealMsg implements IimMsg {
         return null;
     }
 
+    /**
+     * getCustomInt 自定义消息字段 等于9527的情况是这个消息为待发送的一个消息
+     * 返回类型直接加上1000 解析对应view时判断是否千位为1可知这个消息为待发送的一个消息
+     *
+     * @author gengqiquan
+     * @date 2019-05-09 14:57
+     */
     @Override
     public int uiType() {
+
+        if (elem.getType() == TIMElemType.Custom) {
+            TIMCustomElem customElem = (TIMCustomElem) elem;
+            customData = CustomElem.create(new String(customElem.getData()));
+            int type = 0;
+            switch (customData.getType()) {
+                case share:
+                    type = 5;
+                    break;
+            }
+            if (new TIMMessageExt(timMsg).getCustomInt() == 9527) {
+                type = 1000 + type;
+            }
+            return type;
+        }
         switch (elem.getType()) {
             case Text:
                 return 1;
@@ -181,15 +204,6 @@ public class RealMsg implements IimMsg {
                 return 3;
             case Sound:
                 return 4;
-            case Custom:
-                TIMCustomElem customElem = (TIMCustomElem) elem;
-                customData = CustomElem.create(new String(customElem.getData()));
-                switch (customData.getType()) {
-                    case share:
-                        return 5;
-                    default:
-                        return 0;
-                }
             default:
                 return 0;
         }

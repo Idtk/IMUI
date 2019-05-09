@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.gengqiquan.imui.R
 import com.gengqiquan.imui.help.LongPressHelp
 import com.gengqiquan.imui.interfaces.IimMsg
+import com.gengqiquan.imui.model.MenuAction
 import org.jetbrains.anko.*
 
 abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(parent) {
@@ -69,12 +70,13 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
 
             LongPressHelp.showPopAction(
                 context, item.realData(),
-                getMenuAction(LongPressHelp.getActions()),
+                getMenuAction(LongPressHelp.getActions().filter { !it.isOnlySelf || item.isSelf() } as MutableList<MenuAction>),
                 parent.rootView,
                 floatBaseView()
             )
-            true
+            false
         }
+        // TODO: 2019-05-09 消息撤回UI改变
     }
 
     open fun getMenuAction(actions: MutableList<com.gengqiquan.imui.model.MenuAction>): MutableList<com.gengqiquan.imui.model.MenuAction> {

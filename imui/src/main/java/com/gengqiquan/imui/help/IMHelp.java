@@ -1,15 +1,13 @@
 package com.gengqiquan.imui.help;
 
 import android.content.Context;
-import com.gengqiquan.imui.interfaces.IAudioRecorder;
-import com.gengqiquan.imui.interfaces.IMsgBuildPolicy;
-import com.gengqiquan.imui.interfaces.IimViewFactory;
-import com.gengqiquan.imui.interfaces.ImImageDisplayer;
+import com.gengqiquan.imui.interfaces.*;
 import com.gengqiquan.imui.ui.DefaultIMViewFactory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -29,6 +27,20 @@ public class IMHelp {
 
 
     private static final long LIMIT_SIZE = 100 * 1024 * 1024;//100MB防止后面压缩没有空间了
+    private static Map<Context, IMsgSender> msgSenderMap;
+
+    public static void registerMsgSender(Context context, IMsgSender msgSender) {
+        msgSenderMap.put(context, msgSender);
+    }
+
+    public static void unRegisterMsgSender(Context context) {
+        msgSenderMap.remove(context);
+    }
+
+    public static IMsgSender getMsgSender(Context context) {
+        return msgSenderMap.get(context);
+    }
+
     private static IMsgBuildPolicy msgBuildPolicy;
 
     public static IMsgBuildPolicy getMsgBuildPolicy() {
@@ -78,7 +90,7 @@ public class IMHelp {
     }
 
 
-    public static void init(Context context, IAudioRecorder recorder, IMsgBuildPolicy buildPolicy, ImImageDisplayer dispalyer) {
+    public static void init(Context context, IAudioRecorder recorder, IMsgBuildPolicy buildPolicy, ImImageDisplayer displayer) {
         if (pathProvider == null) {
             synchronized (IMHelp.class) {
                 if (pathProvider == null) {
@@ -87,7 +99,7 @@ public class IMHelp {
                     viewFactory.add(new DefaultIMViewFactory(context));
                     msgBuildPolicy = buildPolicy;
                     audioRecord = recorder;
-                    imageDisplayer = dispalyer;
+                    imageDisplayer = displayer;
                 }
             }
         }
