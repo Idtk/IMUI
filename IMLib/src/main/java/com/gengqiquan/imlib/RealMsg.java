@@ -45,37 +45,6 @@ public class RealMsg implements IimMsg {
         for (int i = 0; i < timMsg.getElementCount(); i++) {
             TIMElem elem = timMsg.getElement(i);
             Date time = i == timMsg.getElementCount() - 1 ? new Date(timMsg.timestamp() * 1000) : null;
-//            if (elem.getType() == TIMElemType.UGC) {
-//                TIMVideoElem timUgcElem = (TIMVideoElem) elem;
-//                TIMVideo cover = timUgcElem.getVideoInfo();
-//                //下载小视频消息封面文件，并保存到 coverPath 指定的路径
-//                cover.getVideo();
-//                cover.getImage(coverPath, new TIMCallBack() {
-//                    @Override
-//                    public void onError(int code, String desc) {
-//                        Log.e(tag, "download cover failed, code: " + code + "|msg: " + desc);
-//                    }
-//
-//                    @Override
-//                    public void onSuccess() {
-//                        Log.d(tag, "download cover succ");
-//                    }
-//                });
-//
-//                //下载小视频消息视频文件，并保存到 videoPath 指定的路径
-//                TIMUGCVideo video = timUgcElem.getVideo();
-//                video.getVideo(videoPath, new TIMCallBack() {
-//                    @Override
-//                    public void onError(int code, String desc) {
-//                        Log.e(tag, "download video failed, code: " + code + "|msg: " + desc);
-//                    }
-//
-//                    @Override
-//                    public void onSuccess() {
-//                        Log.d(tag, "download video succ");
-//                    }
-//                });
-//            }
             list.add(new RealMsg(timMsg, elem, time));
         }
         return list;
@@ -172,15 +141,18 @@ public class RealMsg implements IimMsg {
     }
 
     /**
-     * getCustomInt 自定义消息字段 等于9527的情况是这个消息为待发送的一个消息
+     * getCustomInt 自定义消息字段 等于-1的情况是这个消息为待发送的一个消息
      * 返回类型直接加上1000 解析对应view时判断是否千位为1可知这个消息为待发送的一个消息
+     * 返回-1 代表撤回的消息
      *
      * @author gengqiquan
      * @date 2019-05-09 14:57
      */
     @Override
     public int uiType() {
-
+        if (timMsg.status() == TIMMessageStatus.HasRevoked) {
+            return -1;
+        }
         if (elem.getType() == TIMElemType.Custom) {
             TIMCustomElem customElem = (TIMCustomElem) elem;
             customData = CustomElem.create(new String(customElem.getData()));
@@ -190,7 +162,7 @@ public class RealMsg implements IimMsg {
                     type = 5;
                     break;
             }
-            if (new TIMMessageExt(timMsg).getCustomInt() == 9527) {
+            if (new TIMMessageExt(timMsg).getCustomInt() == -1) {
                 type = 1000 + type;
             }
             return type;

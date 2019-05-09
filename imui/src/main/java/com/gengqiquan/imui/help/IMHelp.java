@@ -5,10 +5,7 @@ import com.gengqiquan.imui.interfaces.*;
 import com.gengqiquan.imui.ui.DefaultIMViewFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 即时通讯调度类。
@@ -27,7 +24,7 @@ public class IMHelp {
 
 
     private static final long LIMIT_SIZE = 100 * 1024 * 1024;//100MB防止后面压缩没有空间了
-    private static Map<Context, IMsgSender> msgSenderMap;
+    private static Map<Context, IMsgSender> msgSenderMap=new HashMap<>();
 
     public static void registerMsgSender(Context context, IMsgSender msgSender) {
         msgSenderMap.put(context, msgSender);

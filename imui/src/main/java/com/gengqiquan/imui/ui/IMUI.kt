@@ -28,7 +28,7 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImHolder {
-                return ImHolder.get( parent, viewType)
+                return ImHolder.get(parent, viewType)
             }
 
             override fun getItemCount() = data.size + allInit
@@ -44,7 +44,7 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
 
 
     private var data: MutableList<IimMsg> = arrayListOf()
-    fun oldMsgs(oldData: MutableList<IimMsg>, init: Boolean = false) {
+    fun oldMsgs(oldData: List<IimMsg>, init: Boolean = false) {
         if (init) {
             data.clear()
         }
@@ -56,7 +56,7 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
         mIsLoadMore = false
     }
 
-    fun newMsgs(newData: MutableList<IimMsg>) {
+    fun newMsgs(newData: List<IimMsg>) {
         allInit = 1
         val start = data.size
         data.addAll(newData)
@@ -69,6 +69,11 @@ class IMUI(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs)
         allInit = 1
         data.add(msg)
         uiAdapter.notifyItemInserted(data.size)
+        scrollToNeed(data.size - 1)
+    }
+
+    fun refresh() {
+        uiAdapter.notifyDataSetChanged()
         scrollToNeed(data.size - 1)
     }
 

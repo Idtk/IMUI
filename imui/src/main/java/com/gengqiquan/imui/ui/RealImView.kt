@@ -76,7 +76,6 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
             )
             false
         }
-        // TODO: 2019-05-09 消息撤回UI改变
     }
 
     open fun getMenuAction(actions: MutableList<com.gengqiquan.imui.model.MenuAction>): MutableList<com.gengqiquan.imui.model.MenuAction> {

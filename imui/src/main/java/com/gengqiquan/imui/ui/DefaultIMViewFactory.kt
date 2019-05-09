@@ -11,6 +11,7 @@ import com.gengqiquan.imui.interfaces.IimViewFactory
  */
 class DefaultIMViewFactory(val context: Context) : IimViewFactory {
     companion object {
+        val REVOKE = -1
         val TEXT = 1
         val IMG = 2
         val VIDEO = 3
@@ -21,6 +22,9 @@ class DefaultIMViewFactory(val context: Context) : IimViewFactory {
 
     override fun create(parent: ViewGroup, viewType: Int): ImView? {
         return when (viewType) {
+            REVOKE -> {
+                ImRevokeView(context, parent)
+            }
             TEXT -> {
                 ImTextView(context, parent)
             }

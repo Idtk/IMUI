@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 //        list.add(RealMsg(TXMsg("", "", TXMsg.Type.VIDEO), false))
         IMHelp.init(applicationContext, TIMAudioRecorder(), TIMMsgBuilder(), object : ImImageDisplayer {
             override fun display(url: String, imageView: ImageView, listener: DisplayListener?) {
-                Glide.with(this@MainActivity)
+                Glide.with(imageView.context)
                     .load(url)
                     .asBitmap()
                     .into(object : SimpleTarget<Bitmap>() {
@@ -215,15 +215,18 @@ class MainActivity : AppCompatActivity() {
             }
         })
         IMHelp.registerMsgSender(this, object : IMsgSender {
-            override fun send(type: Int, msg: Any) {
+
+            override fun send(type: Int, msg: Any, senderListener: ISenderListener) {
+
+//                im_ui.newMsgs(RealMsg.create(msg as TIMMessage))
                 con.sendMessage(msg as TIMMessage, object : TIMValueCallBack<TIMMessage> {
                     override fun onSuccess(msg: TIMMessage) {
                         Log.e(tag, "onSuccess" + msg.toString())
-                        val list = mutableListOf<IimMsg>()
-                        list.addAll(RealMsg.create(msg))
+//                        val list = mutableListOf<IimMsg>()
+//                        list.addAll()
 
 //                    list.reverse()
-                        im_ui.newMsgs(list)
+                        im_ui.newMsgs(RealMsg.create(msg))
                     }
 
                     override fun onError(p0: Int, p1: String?) {
@@ -303,6 +306,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onSuccess() {
                     // TODO: 2019-05-07 撤回成功
                     Log.e(tag, "撤回成功")
+                    im_ui.refresh()
                 }
 
                 override fun onError(p0: Int, p1: String?) {

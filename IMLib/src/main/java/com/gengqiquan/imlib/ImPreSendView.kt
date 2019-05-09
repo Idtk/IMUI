@@ -16,6 +16,7 @@ import com.gengqiquan.imlib.model.CustomType
 import com.gengqiquan.imlib.model.ShareElem
 import com.gengqiquan.imui.help.IMHelp
 import com.gengqiquan.imui.input.ButtonFactory
+import com.gengqiquan.imui.interfaces.ISenderListener
 import com.gengqiquan.imui.interfaces.IimMsg
 import com.gengqiquan.imui.ui.ImView
 import com.gengqiquan.imui.ui.RealImView
@@ -85,7 +86,11 @@ class ImPreSendView(val context: Context, parent: ViewGroup) : ImView(parent) {
                 tv_desc?.text = data.msg.content
                 IMHelp.getImageDisplayer().display(data.msg.pic_url, iv_img!!)
                 tv_send?.singleClick {
-                    IMHelp.getMsgSender(context)?.send(ButtonFactory.CAR, item.realData())
+                    IMHelp.getMsgSender(context)?.send(ButtonFactory.CAR, item.realData(), object : ISenderListener {
+                        override fun statusChange(type: Int) {
+                            
+                        }
+                    })
                 }
             }
             else -> null
