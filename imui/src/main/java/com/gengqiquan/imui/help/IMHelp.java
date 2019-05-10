@@ -24,7 +24,7 @@ public class IMHelp {
 
 
     private static final long LIMIT_SIZE = 100 * 1024 * 1024;//100MB防止后面压缩没有空间了
-    private static Map<Context, IMsgSender> msgSenderMap=new HashMap<>();
+    private static Map<Context, IMsgSender> msgSenderMap = new HashMap<>();
 
     public static void registerMsgSender(Context context, IMsgSender msgSender) {
         msgSenderMap.put(context, msgSender);
@@ -85,7 +85,6 @@ public class IMHelp {
     public static int getVideoRecordMaxTime() {
         return 10;
     }
-
 
     public static void init(Context context, IAudioRecorder recorder, IMsgBuildPolicy buildPolicy, ImImageDisplayer displayer) {
         if (pathProvider == null) {

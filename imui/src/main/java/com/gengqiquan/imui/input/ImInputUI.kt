@@ -2,7 +2,6 @@ package com.gengqiquan.imui.input
 
 import android.content.Context
 import android.graphics.Color
-import android.util.AttributeSet
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -10,12 +9,10 @@ import androidx.core.widget.doOnTextChanged
 import com.gengqiquan.imui.R
 import com.gengqiquan.imui.audio.ImAudioInputView
 import com.gengqiquan.imui.help.IMHelp
+import com.gengqiquan.imui.interfaces.ISelectListener
 import com.gengqiquan.imui.interfaces.OtherProxy
 import com.gengqiquan.imui.model.ButtonInfo
-import com.gengqiquan.imui.ui.DefaultIMViewFactory
-import com.gengqiquan.imui.ui.gone
-import com.gengqiquan.imui.ui.isShow
-import com.gengqiquan.imui.ui.singleClick
+import com.gengqiquan.imui.ui.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.sdk27.coroutines.onFocusChange
@@ -61,6 +58,9 @@ class ImInputUI(context: Context) : LinearLayout(context) {
     private var iv_other: ImageView? = null
     private var iv_audio: ImageView? = null
     private var gv_button: View? = null
+    private var im_emoji = ImEmojiView(context).apply {
+        visibility = View.GONE
+    }
     private var inAudio = false
 
     init {
@@ -78,6 +78,7 @@ class ImInputUI(context: Context) : LinearLayout(context) {
             iv_audio = imageView {
                 onClick {
                     audioState()
+                    im_emoji?.gone()
                 }
                 background = resources.getDrawable(R.drawable.im_voice)
             }.lparams(dip(26), dip(26)) {
@@ -101,12 +102,11 @@ class ImInputUI(context: Context) : LinearLayout(context) {
                     iv_other?.isShow(text.isNullOrBlank())
                     tv_send?.isShow(!text.isNullOrBlank())
                 }
-                onClick {
-
-                }
                 onFocusChange { v, hasFocus ->
-                    if (hasFocus)
+                    if (hasFocus) {
                         gv_button?.gone()
+                        im_emoji?.gone()
+                    }
                 }
             }.lparams(0, wrapContent) {
                 topMargin = dip(8)
@@ -115,7 +115,20 @@ class ImInputUI(context: Context) : LinearLayout(context) {
             }
             audioView(this)
             imageView {
-                onClick { }
+                onClick {
+                    if (inAudio) {
+                        audioState()
+                    }
+                    im_emoji?.isShow(im_emoji!!.visibility == View.GONE)
+                    if (gv_button!!.visibility != View.GONE) {
+                        gv_button?.gone()
+                    }
+                    if (im_emoji!!.visibility == View.GONE) {
+                        openKeybord(et_text!!)
+                    } else {
+                        closeKeybord(et_text!!)
+                    }
+                }
                 background = resources.getDrawable(R.drawable.im_face)
             }.lparams(dip(26), dip(26)) {
                 leftMargin = dip(11)
@@ -128,7 +141,7 @@ class ImInputUI(context: Context) : LinearLayout(context) {
                         audioState()
                     }
                     gv_button?.isShow(gv_button!!.visibility == View.GONE)
-
+                    im_emoji?.gone()
                     if (et_text!!.isFocused && gv_button!!.visibility == View.GONE) {
                         openKeybord(et_text!!)
                     } else {
@@ -175,8 +188,12 @@ class ImInputUI(context: Context) : LinearLayout(context) {
             adapter = uiAdapter
             layoutParams = LayoutParams(matchParent, dip(118))
         }
-
-
+        addView(im_emoji, LayoutParams(matchParent, wrapContent))
+        im_emoji.selectedListener = object : ISelectListener {
+            override fun select(text: String) {
+                et_text?.text?.append(text)
+            }
+        }
         data.add(
             ButtonInfo(
                 "照片",
