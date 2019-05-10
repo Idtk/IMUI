@@ -77,6 +77,17 @@ class IMUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs
         scrollToNeed(data.size - 1)
     }
 
+    fun delete(any: Any) {
+//        val index = data.indexOf(any)
+//        if (index>-1){
+//
+//        }
+        if (data.remove(any)) {
+            uiAdapter.notifyDataSetChanged()
+        }
+
+    }
+
     fun refresh() {
         uiAdapter.notifyDataSetChanged()
         scrollToNeed(data.size - 1)
@@ -88,7 +99,7 @@ class IMUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs
     }
 
     val listUI: RecyclerView
-    val inputUI: ImInputUI
+    val inputUI: ImInputUI = ImInputUI(context)
     private val linearLayoutManager = LinearLayoutManager(context)
 
     init {
@@ -106,7 +117,14 @@ class IMUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs
                     scrollToNeed(data.size - 1)
                 }
             }
-            setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+                    if (dy < -1) {
+                        inputUI.reset()
+                    }
+                }
+
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     if (!mIsLoadMore && allInit == 1 && (newState == SCROLL_STATE_IDLE || newState == SCROLL_STATE_SETTLING)) {
                         if (!recyclerView.canScrollVertically(-1)) {
@@ -117,7 +135,7 @@ class IMUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs
                 }
             })
         }
-        inputUI = ImInputUI(context)
+
         addView(inputUI)
         viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             var lastHeight = 0
@@ -133,7 +151,8 @@ class IMUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs
         })
     }
 
-    var mIsLoadMore = false
+    private var lastListY = 0
+    private var mIsLoadMore = false
     private var moreOldMsgListener: IMoreOldMsgListener? = null
     fun setMoreOldmoreOldMsgListener(listener: IMoreOldMsgListener) {
         moreOldMsgListener = listener

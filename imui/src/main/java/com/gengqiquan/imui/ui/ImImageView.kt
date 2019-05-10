@@ -44,7 +44,11 @@ class ImImageView(context: Context, parent: ViewGroup) : RealImView(context, par
         val newHeight: Int
         val per = h / w.toFloat()
         Log.d("display", w.toString() + ":" + h.toString() + "++" + per)
-        if (per < 1) {
+        if (w < max && h < max) {
+            newWidth = max
+            newHeight = max
+            iv_img?.scaleType = ImageView.ScaleType.FIT_XY
+        } else if (per < 1) {
             newWidth = max
             newHeight = (h * max / w.toFloat()).toInt()
             iv_img?.scaleType = ImageView.ScaleType.CENTER_CROP

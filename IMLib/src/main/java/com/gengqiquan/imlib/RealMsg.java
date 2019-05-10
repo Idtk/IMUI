@@ -196,7 +196,7 @@ public class RealMsg implements IimMsg {
     @NotNull
     @Override
     public String sender() {
-        return timMsg.getSender();
+        return timMsg.getSenderProfile().getNickName();
     }
 
     CustomElem customData;

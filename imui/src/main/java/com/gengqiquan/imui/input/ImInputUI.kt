@@ -207,14 +207,6 @@ class ImInputUI(context: Context) : LinearLayout(context) {
     }
 
     fun audioState() {
-        closeKeybord(et_text!!)
-        if (et_text!!.isFocused && gv_button!!.visibility == View.GONE) {
-            openKeybord(et_text!!)
-        } else {
-
-            et_text?.clearFocus()
-        }
-
         inAudio = !inAudio
         tv_audio?.isShow(inAudio)
         et_text?.isShow(!inAudio)
@@ -242,6 +234,13 @@ class ImInputUI(context: Context) : LinearLayout(context) {
         send = action
     }
 
+    fun reset() {
+        if (et_text!!.isFocused) {
+            et_text?.clearFocus()
+            closeKeybord(et_text!!)
+        }
+        gv_button?.gone()
+    }
 
     private var send: (Int, Any) -> Unit = { type, msg -> }
     private fun openKeybord(mEditText: EditText) {

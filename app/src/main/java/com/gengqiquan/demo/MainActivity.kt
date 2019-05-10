@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         TIMManager.getInstance().userConfig = TIMUserConfigMsgExt(userConfig)
-            .setMessageReceiptListener {
+            .setMessageRevokedListener {
                 im_ui.refresh()
             }
         TIMManager.getInstance().addMessageListener(object : TIMMessageListener {
@@ -327,8 +327,9 @@ class MainActivity : AppCompatActivity() {
                 Log.e(tag, "删除失败")
                 return@MenuAction
             }
-            lastMsg = null
-            loadMore()
+//            lastMsg = null
+//            loadMore()
+            im_ui.delete(it)
             Log.e(tag, "删除成功")
         })
         LongPressHelp.init(list)
