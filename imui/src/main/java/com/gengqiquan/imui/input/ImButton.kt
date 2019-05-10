@@ -13,7 +13,7 @@ class ImButton(context: Context) : LinearLayout(context) {
     var iv_img: ImageView? = null
 
     init {
-        layoutParams = LinearLayout.LayoutParams(matchParent, wrapContent)
+        layoutParams = LinearLayout.LayoutParams(matchParent, matchParent)
         topPadding = dip(15)
         gravity = Gravity.CENTER_HORIZONTAL
         orientation= VERTICAL

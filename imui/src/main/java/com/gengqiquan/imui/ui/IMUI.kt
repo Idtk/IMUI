@@ -78,14 +78,11 @@ class IMUI(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs
     }
 
     fun delete(any: Any) {
-//        val index = data.indexOf(any)
-//        if (index>-1){
-//
-//        }
-        if (data.remove(any)) {
-            uiAdapter.notifyDataSetChanged()
+        val index = data.indexOf(any)
+        if (index > -1) {
+            data.removeAt(index)
+            uiAdapter.notifyItemRemoved(index)
         }
-
     }
 
     fun refresh() {

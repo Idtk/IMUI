@@ -170,9 +170,9 @@ class ImInputUI(context: Context) : LinearLayout(context) {
 
         gv_button = gridView {
             visibility = View.GONE
+            overScrollMode = View.OVER_SCROLL_NEVER
             numColumns = 4
             adapter = uiAdapter
-            bottomPadding = dip(20)
             layoutParams = LayoutParams(matchParent, dip(118))
         }
 

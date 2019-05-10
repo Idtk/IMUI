@@ -62,7 +62,11 @@ abstract class RealImView(val context: Context, parent: ViewGroup) : ImView(pare
         tv_header?.layoutParams = (tv_header?.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = if (item.isSelf()) Gravity.RIGHT else Gravity.LEFT
         }
-        tv_header?.text = "小明"
+        var name = item.sender().toString()
+        if (name.length > 2) {
+            name = name.substring(name.length - 2)
+        }
+        tv_header?.text = name
         tv_time?.isShow(!item.time().isNullOrEmpty())
         tv_time?.text = item.time() ?: ""
         decoratorItemView(item)
