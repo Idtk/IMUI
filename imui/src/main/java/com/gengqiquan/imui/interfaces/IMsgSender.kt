@@ -13,7 +13,6 @@ interface IMsgSender {
         annotation class SendType
     }
 
-
     fun send(@SendType type: Int, msg: Any, senderListener: ISenderListener)
 
 }
