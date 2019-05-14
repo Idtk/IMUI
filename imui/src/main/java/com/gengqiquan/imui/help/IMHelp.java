@@ -3,6 +3,8 @@ package com.gengqiquan.imui.help;
 import android.content.Context;
 import com.gengqiquan.imui.interfaces.*;
 import com.gengqiquan.imui.ui.DefaultIMViewFactory;
+import com.gengqiquan.imui.ui.DefaultSessionItemView;
+import com.gengqiquan.imui.ui.ISessionItemView;
 
 import java.io.File;
 import java.util.*;
@@ -135,5 +137,14 @@ public class IMHelp {
             return MD5.md5(id + time);
         }
 
+    }
+    private static ISessionItemView session = new DefaultSessionItemView();
+
+    public static ISessionItemView getSession() {
+        return session;
+    }
+
+    public static void setSession(ISessionItemView session) {
+        IMHelp.session = session;
     }
 }
